@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 function App () {
   const subtractionOfDeltaTime = 50;
   const rows = 20;
-	const cols = 10;
+	const cols = 10; 
 
   const [grid, setGrid] = useState (Array.from({ length: rows }, () => Array(cols).fill(null)));
   grid[19][9] = 'red';
@@ -38,43 +38,82 @@ function App () {
   }, []);
 
   function checkPiece(x, y) {
+
     var tmpPiece = {...piece};
     
     tmpPiece.x += x;
     tmpPiece.y += y;
-
     for (var tmpY = 0; tmpY < 3; tmpY++) {
       for (var tmpX = 0; tmpX < 3; tmpX++) {
-        if (tmpPiece.y + tmpY >= rows || (tmpPiece.shape[tmpY][tmpX] && grid[tmpPiece.y + tmpY][tmpPiece.x + tmpX])) {
-          
-          return 1;
+        if ((tmpPiece.shape[tmpY][tmpX] && (tmpPiece.x + tmpX < 0 || tmpPiece.x + tmpX >= cols || tmpPiece.y + tmpY >= rows || grid[tmpPiece.y + tmpY][tmpPiece.x + tmpX]))) {
+          if (tmpPiece.x + tmpX < 0)
+            console.log(" < 0")
+          if (tmpPiece.x + tmpX >= cols)
+            console.log("cols")
+          if (tmpPiece.y + tmpY >= rows)
+            console.log("rows")
+          return false;
         }
       }
     }
-    return 0;
+    return true;
   }
-
-
 
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (checkPiece(0, 1) == 1)
-        return ;
-      setPiece(prevPiece => ({
-        ...prevPiece,
-        y: prevPiece.y + 1
-      }));
+      if (checkPiece(0, 1) == true) {
+        setPiece(prevPiece => ({
+          ...prevPiece,
+          y: prevPiece.y + 1
+        }));
+      }
     }, deltaTimeRef.current);
 
     return () => clearInterval(interval);
   }, [deltaTime]);
   
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+
+      if (event.key === 'ArrowLeft') {
+        console.log(piece)
+        if (checkPiece(-1, 0) == true) {
+          setPiece(prevPiece => ({
+            ...prevPiece,
+            x: prevPiece.x - 1
+          }));
+        }
+      } else if (event.key == 'ArrowUp') {
+        console.log("up");
+      } else if (event.key == 'ArrowRight') {
+        if (checkPiece(1, 0) == true){
+          setPiece(prevPiece => ({
+            ...prevPiece,
+            x: prevPiece.x + 1
+          }));
+        }
+      } else if (event.key == 'ArrowDown') {
+        setPiece(prevPiece => ({
+          ...prevPiece,
+          y: prevPiece.y + 1
+        }));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div>
       <ShowBoard grid={grid} piece={piece}/>
     </div>
   );
 }
+
+
 
 export default App;
