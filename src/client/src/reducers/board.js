@@ -1,16 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { WIDTH, HEIGHT } from "../constants";
+import { createSlice } from '@reduxjs/toolkit';
+import { WIDTH, HEIGHT } from '../../../constants';
 
 export const boardSlice = createSlice({
-  name: "board",
-  initialState: {
-    grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(null)),
-  },
-  reducers: {
-    setBlock: (state, action) => {
-      state.grid[action.payload.x][action.payload.y] = action.payload.color;
-    },
-  },
+	name: 'board',
+	initialState: {
+		grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(null)),
+	},
+	reducers: {
+		setBlock: (state, action) => {
+			state.grid[action.payload.x][action.payload.y] = action.payload.color;
+		},
+	},
 });
 
 export const { setBlock } = boardSlice.actions;

@@ -11,13 +11,16 @@ import {
 	moveDown,
 	selectPiece,
 } from './reducers/piece';
-import { WIDTH, HEIGHT } from './constants';
+import { io } from 'socket.io-client';
+import { WIDTH, HEIGHT, PORT, PROD } from '../../constants';
 
 function App() {
+	const URL = PROD ? undefined : 'http://localhost:' + PORT;
 	const subtractionOfDeltaTime = 50;
 	const grid = useSelector(selectGrid);
 	const piece = useSelector(selectPiece);
 	const dispatch = useDispatch();
+	const socket = io(URL, { autoConnect: false });
 
 	const [deltaTime, setDeltaTime] = useState(1000); // temps entre chaque changement de ligne en ms
 	const deltaTimeRef = useRef(deltaTime);
@@ -52,6 +55,22 @@ function App() {
 		}
 		return true;
 	}
+
+	useEffect(() => {
+		socket.connect();
+
+		socket.on('connect', function () {
+			console.log('connected');
+		});
+
+		socket.on('welcome', function (value) {
+			console.log(value);
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	useEffect(() => {
 		dispatch(setBlock({ x: 19, y: 9, color: 'red' }));
