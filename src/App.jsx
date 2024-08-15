@@ -37,9 +37,15 @@ function App() {
 						tmpPiece.y + tmpY >= HEIGHT ||
 						grid[tmpPiece.y + tmpY][tmpPiece.x + tmpX])
 				) {
-					if (tmpPiece.x + tmpX < 0) console.log(' < 0');
-					if (tmpPiece.x + tmpX >= WIDTH) console.log('WIDTH');
-					if (tmpPiece.y + tmpY >= HEIGHT) console.log('HEIGHT');
+					if (tmpPiece.x + tmpX < 0) {
+						console.log(' < 0');
+					}
+					if (tmpPiece.x + tmpX >= WIDTH) {
+						console.log('WIDTH');
+					}
+					if (tmpPiece.y + tmpY >= HEIGHT) {
+						console.log('HEIGHT');
+					}
 					return false;
 				}
 			}
