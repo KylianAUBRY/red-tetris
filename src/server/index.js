@@ -22,7 +22,7 @@ const corsConfig = PROD
 const io = new Server(server, corsConfig);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-io.on('connection', (socket) => {
+io.on('connect', (socket) => {
 	console.log('A client connected');
 	socket.emit('welcome', 'Welcome to the server');
 
@@ -32,9 +32,9 @@ io.on('connection', (socket) => {
 });
 
 if (PROD) {
-	app.use(express.static(path.join(__dirname, '../dist')));
+	app.use(express.static(path.join(__dirname, '../../dist')));
 	app.get('*', (req, res) => {
-		res.sendFile(path.join(__dirname, '../dist/index.html'));
+		res.sendFile(path.join(__dirname, '../../dist/index.html'));
 	});
 }
 
