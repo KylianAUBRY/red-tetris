@@ -6,9 +6,10 @@ export const pieceSlice = createSlice({
 		x: 0,
 		y: 0,
 		shape: [
-			[null, null, null],
-			[null, null, null],
-			[null, null, null],
+			[null, null, null, null],
+			[null, null, null, null],
+			[null, null, null, null],
+			[null, null, null, null],
 		],
 	},
 	reducers: {

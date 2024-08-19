@@ -1,4 +1,5 @@
 import React from 'react';
+import "./Board.css";
 
 import { useSelector } from 'react-redux';
 import { selectGrid } from '../reducers/board';
@@ -9,14 +10,14 @@ export function ShowBoard() {
 	const piece = useSelector(selectPiece);
 
 	return (
-		<div className='game-box'>
+		<div className='main-game-box'>
 			<div className='tetris-grid'>
 				{grid.map((row, rowIndex) =>
 					row.map((cell, colIndex) => {
 						const tmpY = rowIndex - piece.y;
 						const tmpX = colIndex - piece.x;
 						var pieceCell = null;
-						if (tmpY >= 0 && tmpX >= 0 && tmpY < 3 && tmpX < 3) {
+						if (tmpY >= 0 && tmpX >= 0 && tmpY < piece.shape.length && tmpX < piece.shape.length) {
 							pieceCell = piece.shape[tmpY][tmpX];
 						}
 						return (

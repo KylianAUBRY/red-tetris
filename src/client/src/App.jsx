@@ -1,9 +1,15 @@
 import { ShowBoard } from './components/Board';
+import { MiniTetrisContainer } from "./components/MiniTetrisContainer";
 
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fixPiece } from './reducers/board';
 import { setPiece, movePiece } from './reducers/piece';
+import {
+	setNextShape,
+	selectNextPiece,
+} from './reducers/nextPiece';
+
 import usePieceRef from './hooks/usePieceRef';
 import { io } from 'socket.io-client';
 import { PORT, PROD } from '../../constants';
@@ -13,6 +19,7 @@ function App() {
 	const socket = io(URL, { autoConnect: false });
 	const pieceRef = usePieceRef();
 	const dispatch = useDispatch();
+	const nextPiece = useSelector(selectNextPiece);
 
 	useEffect(() => {
 		socket.connect();
@@ -53,8 +60,11 @@ function App() {
 		};
 	}, []);
 
+	const playerCount = 3;
+
 	return (
-		<div>
+		<div className="game-box">
+			<MiniTetrisContainer playerCount={playerCount}/>
 			<ShowBoard />
 		</div>
 	);

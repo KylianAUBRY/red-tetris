@@ -1,0 +1,12 @@
+.mini-tetris-grid {
+	display: grid;
+	grid-template-columns: repeat(10, 10px);
+	grid-template-rows: repeat(5, 10px);
+	margin-bottom: 10px;
+}
+  
+.mini-tetris-cell {
+	width: 10px;
+	height: 10px;
+	background-color: #444;
+}
