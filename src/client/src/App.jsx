@@ -1,14 +1,11 @@
 import { ShowBoard } from './components/Board';
-import { MiniTetrisContainer } from "./components/MiniTetrisContainer";
+import { MiniTetrisContainer } from './components/MiniTetrisContainer';
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fixPiece } from './reducers/board';
-import { setPiece, movePiece } from './reducers/piece';
-import {
-	setNextShape,
-	selectNextPiece,
-} from './reducers/nextPiece';
+import { setPiece, movePiece, rotatePiece } from './reducers/piece';
+import { setNextShape, selectNextPiece } from './reducers/nextPiece';
 
 import usePieceRef from './hooks/usePieceRef';
 import { io } from 'socket.io-client';
@@ -33,8 +30,11 @@ function App() {
 		});
 
 		socket.on('move', function (direction) {
-			console.log('move', direction);
 			dispatch(movePiece(direction));
+		});
+
+		socket.on('rotate', function () {
+			dispatch(rotatePiece());
 		});
 
 		socket.on('new', function (newPiece) {
@@ -49,6 +49,8 @@ function App() {
 				socket.emit('move', 'right');
 			} else if (event.key == 'ArrowDown') {
 				socket.emit('move', 'down');
+			} else if (event.key == 'ArrowUp') {
+				socket.emit('rotate');
 			}
 		};
 		window.addEventListener('keydown', handleKeyDown);
@@ -63,8 +65,8 @@ function App() {
 	const playerCount = 3;
 
 	return (
-		<div className="game-box">
-			<MiniTetrisContainer playerCount={playerCount}/>
+		<div className='game-box'>
+			<MiniTetrisContainer playerCount={playerCount} />
 			<ShowBoard />
 		</div>
 	);

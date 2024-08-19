@@ -13,9 +13,11 @@ import {
 } from '../constants.js';
 
 class Game {
-	constructor() {
+	constructor(socket) {
+		this.socket = socket;
 		this.grid = new Grid(WIDTH, HEIGHT);
 		this.newPieces();
+		socket.emit('start', this.pieces[0]);
 	}
 
 	newPieces() {
@@ -29,8 +31,10 @@ class Game {
 			new Piece(this, PIECE_Z),
 		];
 		for (var i = this.pieces.length - 1; 0 < i; i--) {
-			var randI = Math.floor(Math.random() * (i + 1));
-			this.pieces.slice(randI, 1, this.pieces[i]);
+			let randI = Math.floor(Math.random() * (i + 1));
+			let tmp = this.pieces[randI];
+			this.pieces[randI] = this.pieces[i];
+			this.pieces[i] = tmp;
 		}
 	}
 
@@ -39,6 +43,7 @@ class Game {
 		if (this.pieces.length === 0) {
 			this.newPieces();
 		}
+		this.socket.emit('new', this.pieces[0]);
 	}
 }
 

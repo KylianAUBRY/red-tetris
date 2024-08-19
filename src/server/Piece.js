@@ -10,11 +10,9 @@ class Piece {
 		const newShape = this.shape.map((row, y) =>
 			row.map((_, x) => this.shape[size - x - 1][y])
 		);
-		if (game.grid.pieceCollides({ ...this, shape: newShape })) {
-			return false;
-		} else {
+		if (game.grid.pieceCollides({ ...this, shape: newShape }) == false) {
 			this.shape = newShape;
-			return true;
+			game.socket.emit('rotate');
 		}
 	}
 
@@ -28,15 +26,12 @@ class Piece {
 		} else if (direction === 'down') {
 			newCoord.y += 1;
 		}
-		if (game.grid.pieceCollides({ ...this, ...newCoord })) {
-			if (direction === 'down') {
-				game.fixPiece(this);
-			}
-			return false;
-		} else {
+		if (game.grid.pieceCollides({ ...this, ...newCoord }) == false) {
 			this.x = newCoord.x;
 			this.y = newCoord.y;
-			return true;
+			game.socket.emit('move', direction);
+		} else if (direction === 'down') {
+			game.fixPiece();
 		}
 	}
 }

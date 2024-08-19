@@ -27,10 +27,16 @@ export const pieceSlice = createSlice({
 				state.y += 1;
 			}
 		},
+		rotatePiece: (state) => {
+			const size = state.shape.length;
+			state.shape = state.shape.map((row, y) =>
+				row.map((_, x) => state.shape[size - x - 1][y])
+			);
+		},
 	},
 });
 
-export const { setPiece, movePiece } = pieceSlice.actions;
+export const { setPiece, movePiece, rotatePiece } = pieceSlice.actions;
 
 export const selectPiece = (state) => state.piece;
 
