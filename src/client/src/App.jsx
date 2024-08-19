@@ -1,5 +1,6 @@
 import { ShowBoard } from './components/Board';
 import { MiniTetrisContainer } from './components/MiniTetrisContainer';
+import { NextPiece } from './components/NextPiece';
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,6 +69,7 @@ function App() {
 		<div className='game-box'>
 			<MiniTetrisContainer playerCount={playerCount} />
 			<ShowBoard />
+			<NextPiece />
 		</div>
 	);
 }

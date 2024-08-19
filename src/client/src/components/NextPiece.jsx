@@ -4,7 +4,11 @@ import "./NextPiece.css";
 import { selectNextPiece } from "../reducers/nextPiece";
 
 export function NextPiece() {
-	const NextPiece = useSelector(NextPiece);
+	// const NextPiece = useSelector(NextPiece);
 
-	
+	return (
+		<div className={'test'}>
+
+		</div>
+	);
 }
