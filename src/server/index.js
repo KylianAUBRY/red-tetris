@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import Game from './Game.js';
 import { PORT, PROD } from '../constants.js';
 
 const app = express();
@@ -22,12 +23,23 @@ const corsConfig = PROD
 const io = new Server(server, corsConfig);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-io.on('connect', (socket) => {
-	console.log('A client connected');
-	socket.emit('welcome', 'Welcome to the server');
+io.on('connect', function (socket) {
+	let game = new Game();
+
+	console.log(`${socket.id} connected`);
+
+	socket.emit('start', game.pieces[0]);
+
+	socket.on('move', (direction) => {
+		if (game.pieces[0].move(game, direction)) {
+			socket.emit('move', direction);
+		} else {
+			socket.emit('new', game.pieces[0]);
+		}
+	});
 
 	socket.on('disconnect', () => {
-		console.log('Client disconnected');
+		console.log(`${socket.id} disconnected`);
 	});
 });
 

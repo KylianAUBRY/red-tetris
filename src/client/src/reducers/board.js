@@ -10,12 +10,21 @@ export const boardSlice = createSlice({
 		setBlock: (state, action) => {
 			state.grid[action.payload.x][action.payload.y] = action.payload.color;
 		},
+		fixPiece: (state, action) => {
+			var piece = action.payload;
+			piece.shape.forEach((shapeRow, y) => {
+				shapeRow.forEach((shapeColor, x) => {
+					if (shapeColor) {
+						state.grid[piece.y + y][piece.x + x] = shapeColor;
+					}
+				});
+			});
+		},
 	},
 });
 
-export const { setBlock } = boardSlice.actions;
+export const { setBlock, fixPiece } = boardSlice.actions;
 
 export const selectGrid = (state) => state.board.grid;
-export const selectBlock = (state, x, y) => state.board.grid[x][y];
 
 export default boardSlice.reducer;
