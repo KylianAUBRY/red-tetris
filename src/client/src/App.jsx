@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fixPiece } from './reducers/board';
 import { setPiece, movePiece, rotatePiece, dropPiece } from './reducers/piece';
-import { setNextShape, selectNextPiece } from './reducers/nextPiece';
+import { setNextShapes } from './reducers/nextShapes';
 
 import usePieceRef from './hooks/usePieceRef';
 import { io } from 'socket.io-client';
@@ -27,7 +27,7 @@ function App() {
 
 		socket.on('start', function (startPiece, nextPieces) {
 			dispatch(setPiece(startPiece));
-			dispatch(setNextShape(nextPieces));
+			dispatch(setNextShapes(nextPieces));
 		});
 
 		socket.on('move', function (direction) {
@@ -44,7 +44,7 @@ function App() {
 
 		socket.on('new', function (newPiece, nextPieces) {
 			dispatch(fixPiece(pieceRef.current));
-			dispatch(setNextShape(nextPieces));
+			dispatch(setNextShapes(nextPieces));
 			dispatch(setPiece(newPiece));
 		});
 
@@ -75,8 +75,12 @@ function App() {
 	return (
 		<div className='game-box'>
 			<MiniTetrisContainer playerCount={playerCount} />
-			<ShowBoard />
-			<NextPiece />
+			<div className='main-game-box'>
+				<div className="board-container">
+					<ShowBoard />
+					<NextPiece />
+				</div>
+				</div>
 		</div>
 	);
 }

@@ -10,7 +10,6 @@ export function ShowBoard() {
 	const piece = useSelector(selectPiece);
 
 	return (
-		<div className='main-game-box'>
 			<div className='tetris-grid'>
 				{grid.map((row, rowIndex) =>
 					row.map((cell, colIndex) => {
@@ -32,6 +31,5 @@ export function ShowBoard() {
 					})
 				)}
 			</div>
-		</div>
 	);
 }

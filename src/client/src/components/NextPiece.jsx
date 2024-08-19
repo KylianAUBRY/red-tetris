@@ -1,14 +1,32 @@
 import React from "react";
 import "./NextPiece.css";
 
-import { selectNextPiece } from "../reducers/nextPiece";
+import { useSelector } from "react-redux";
+import { selectNextShape } from "../reducers/nextShapes";
 
 export function NextPiece() {
-	// const NextPiece = useSelector(NextPiece);
+	const pieces = useSelector(selectNextShape);
 
 	return (
-		<div className={'test'}>
+		<div className="next-piece-grid">
+			 {pieces.map((shape, index) => {
+				return (
+				<div key={index} className="next-piece-grid">
+					{shape.map((row, rowIndex) => 
+						row.map((cell, colIndex) => {
+							//www
 
+							return (
+								<div>
+									
+								</div>
+							);
+						}),
+					)}
+				</div>
+				)
+}
+			)}
 		</div>
 	);
 }
