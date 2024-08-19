@@ -27,11 +27,15 @@ io.on('connect', function (socket) {
 	let game = new Game(socket);
 
 	socket.on('move', (direction) => {
-		game.pieces[0].move(game, direction);
+		game.movePiece(direction);
 	});
 
 	socket.on('rotate', () => {
-		game.pieces[0].rotate(game);
+		game.rotatePiece();
+	});
+
+	socket.on('drop', () => {
+		game.dropPiece();
 	});
 
 	socket.on('disconnect', () => {});

@@ -5,7 +5,7 @@ import { NextPiece } from './components/NextPiece';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fixPiece } from './reducers/board';
-import { setPiece, movePiece, rotatePiece } from './reducers/piece';
+import { setPiece, movePiece, rotatePiece, dropPiece } from './reducers/piece';
 import { setNextShape, selectNextPiece } from './reducers/nextPiece';
 
 import usePieceRef from './hooks/usePieceRef';
@@ -17,7 +17,6 @@ function App() {
 	const socket = io(URL, { autoConnect: false });
 	const pieceRef = usePieceRef();
 	const dispatch = useDispatch();
-	const nextPiece = useSelector(selectNextPiece);
 
 	useEffect(() => {
 		socket.connect();
@@ -26,8 +25,9 @@ function App() {
 			console.log('Connected to server');
 		});
 
-		socket.on('start', function (startPiece) {
+		socket.on('start', function (startPiece, nextPieces) {
 			dispatch(setPiece(startPiece));
+			dispatch(setNextShape(nextPieces));
 		});
 
 		socket.on('move', function (direction) {
@@ -38,8 +38,13 @@ function App() {
 			dispatch(rotatePiece());
 		});
 
-		socket.on('new', function (newPiece) {
+		socket.on('drop', function (y) {
+			dispatch(dropPiece(y));
+		});
+
+		socket.on('new', function (newPiece, nextPieces) {
 			dispatch(fixPiece(pieceRef.current));
+			dispatch(setNextShape(nextPieces));
 			dispatch(setPiece(newPiece));
 		});
 
@@ -52,6 +57,8 @@ function App() {
 				socket.emit('move', 'down');
 			} else if (event.key == 'ArrowUp') {
 				socket.emit('rotate');
+			} else if (event.key == ' ') {
+				socket.emit('drop');
 			}
 		};
 		window.addEventListener('keydown', handleKeyDown);

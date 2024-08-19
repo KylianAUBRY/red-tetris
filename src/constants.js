@@ -2,6 +2,8 @@ export const PROD = false;
 export const PORT = 4000;
 export const WIDTH = 10;
 export const HEIGHT = 20;
+export const NEXT_PIECE_COUNT = 4;
+export const PIECE_COUNT = 7;
 
 export const PIECE_I = [
 	[null, null, null, null],

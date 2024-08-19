@@ -33,10 +33,14 @@ export const pieceSlice = createSlice({
 				row.map((_, x) => state.shape[size - x - 1][y])
 			);
 		},
+		dropPiece: (state, action) => {
+			state.y = action.payload;
+		},
 	},
 });
 
-export const { setPiece, movePiece, rotatePiece } = pieceSlice.actions;
+export const { setPiece, movePiece, rotatePiece, dropPiece } =
+	pieceSlice.actions;
 
 export const selectPiece = (state) => state.piece;
 

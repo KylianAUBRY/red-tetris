@@ -5,34 +5,29 @@ class Piece {
 		this.shape = shape;
 	}
 
-	rotate(game) {
-		const size = this.shape.length;
-		const newShape = this.shape.map((row, y) =>
-			row.map((_, x) => this.shape[size - x - 1][y])
-		);
-		if (game.grid.pieceCollides({ ...this, shape: newShape }) == false) {
-			this.shape = newShape;
-			game.socket.emit('rotate');
+	clone() {
+		return new Piece(this.game, this.shape, this.x, this.y);
+	}
+
+	move(direction) {
+		switch (direction) {
+			case 'left':
+				this.x -= 1;
+				break;
+			case 'right':
+				this.x += 1;
+				break;
+			case 'down':
+				this.y += 1;
+				break;
 		}
 	}
 
-	move(game, direction) {
-		const newCoord = { x: this.x, y: this.y };
-
-		if (direction === 'left') {
-			newCoord.x -= 1;
-		} else if (direction === 'right') {
-			newCoord.x += 1;
-		} else if (direction === 'down') {
-			newCoord.y += 1;
-		}
-		if (game.grid.pieceCollides({ ...this, ...newCoord }) == false) {
-			this.x = newCoord.x;
-			this.y = newCoord.y;
-			game.socket.emit('move', direction);
-		} else if (direction === 'down') {
-			game.fixPiece();
-		}
+	rotate() {
+		const size = this.shape.length;
+		this.shape = this.shape.map((row, y) =>
+			row.map((_, x) => this.shape[size - x - 1][y])
+		);
 	}
 }
 
