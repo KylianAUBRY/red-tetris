@@ -10,7 +10,7 @@ export function MiniTetris({ grid, piece }) {
             const tmpY = rowIndex - piece.y;
             const tmpX = colIndex - piece.x;
             var pieceCell = null;
-            if (tmpY >= 0 && tmpX >= 0 && tmpY < 3 && tmpX < 3) {
+            if (tmpY >= 0 && tmpX >= 0 && tmpY < piece.shape.length && tmpX < piece.shape.length) {
               pieceCell = piece.shape[tmpY][tmpX];
             }
             return (
