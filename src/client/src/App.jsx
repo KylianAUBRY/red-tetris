@@ -4,7 +4,7 @@ import { NextPiece } from './components/NextPiece';
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fixPiece } from './reducers/board';
+import { fixPiece, clearLine } from './reducers/board';
 import { setPiece, movePiece, rotatePiece, dropPiece } from './reducers/piece';
 import { setNextShapes } from './reducers/nextShapes';
 
@@ -25,9 +25,9 @@ function App() {
 			console.log('Connected to server');
 		});
 
-		socket.on('start', function (startPiece, nextPieces) {
+		socket.on('start', function (startPiece, nextShapes) {
 			dispatch(setPiece(startPiece));
-			dispatch(setNextShapes(nextPieces));
+			dispatch(setNextShapes(nextShapes));
 		});
 
 		socket.on('move', function (direction) {
@@ -42,10 +42,15 @@ function App() {
 			dispatch(dropPiece(y));
 		});
 
-		socket.on('new', function (newPiece, nextPieces) {
+		socket.on('new', function (newPiece, nextShapes) {
 			dispatch(fixPiece(pieceRef.current));
-			dispatch(setNextShapes(nextPieces));
+			dispatch(clearLine());
+			dispatch(setNextShapes(nextShapes));
 			dispatch(setPiece(newPiece));
+		});
+
+		socket.on('end', function () {
+			console.log('Game Over');
 		});
 
 		const handleKeyDown = (event) => {
@@ -76,11 +81,11 @@ function App() {
 		<div className='game-box'>
 			<MiniTetrisContainer playerCount={playerCount} />
 			<div className='main-game-box'>
-				<div className="board-container">
+				<div className='board-container'>
 					<ShowBoard />
 					<NextPiece />
 				</div>
-				</div>
+			</div>
 		</div>
 	);
 }

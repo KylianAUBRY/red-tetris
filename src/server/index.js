@@ -24,21 +24,7 @@ const io = new Server(server, corsConfig);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 io.on('connect', function (socket) {
-	let game = new Game(socket);
-
-	socket.on('move', (direction) => {
-		game.movePiece(direction);
-	});
-
-	socket.on('rotate', () => {
-		game.rotatePiece();
-	});
-
-	socket.on('drop', () => {
-		game.dropPiece();
-	});
-
-	socket.on('disconnect', () => {});
+	new Game(socket, Date.now());
 });
 
 if (PROD) {

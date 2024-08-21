@@ -29,6 +29,17 @@ class Grid {
 			});
 		});
 	}
+
+	clearLine() {
+		return this.grid.reduce((count, row, y) => {
+			if (row.every((color) => color)) {
+				this.grid.splice(y, 1);
+				this.grid.unshift(Array(this.width).fill(null));
+				count++;
+			}
+			return count;
+		}, 0);
+	}
 }
 
 export default Grid;

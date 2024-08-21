@@ -2,6 +2,9 @@ export const PROD = false;
 export const PORT = 4000;
 export const WIDTH = 10;
 export const HEIGHT = 20;
+export const MAX_DELAY = 1000;
+export const MIN_DELAY = 50;
+export const ACCELERATION = 5;
 export const NEXT_PIECE_COUNT = 4;
 export const PIECE_COUNT = 7;
 

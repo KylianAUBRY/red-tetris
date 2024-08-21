@@ -1,12 +1,12 @@
 class Piece {
-	constructor(game, shape, x = 0, y = 0) {
+	constructor(shape, x = 0, y = 0) {
 		this.x = x;
 		this.y = y;
 		this.shape = shape;
 	}
 
 	clone() {
-		return new Piece(this.game, this.shape, this.x, this.y);
+		return new Piece(this.shape, this.x, this.y);
 	}
 
 	move(direction) {

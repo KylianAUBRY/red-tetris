@@ -20,10 +20,18 @@ export const boardSlice = createSlice({
 				});
 			});
 		},
+		clearLine: (state) => {
+			state.grid.forEach((row, y) => {
+				if (row.every((color) => color)) {
+					state.grid.splice(y, 1);
+					state.grid.unshift(Array(WIDTH).fill(null));
+				}
+			});
+		},
 	},
 });
 
-export const { setBlock, fixPiece } = boardSlice.actions;
+export const { setBlock, fixPiece, clearLine } = boardSlice.actions;
 
 export const selectGrid = (state) => state.board.grid;
 
