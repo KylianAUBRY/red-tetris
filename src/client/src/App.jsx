@@ -1,6 +1,6 @@
 import { ShowBoard } from './components/Board';
 import { MiniTetrisContainer } from './components/MiniTetrisContainer';
-import { NextPiece } from './components/NextPiece';
+import { NextShapes } from './components/NextShapes';
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -83,7 +83,7 @@ function App() {
 			<div className='main-game-box'>
 				<div className='board-container'>
 					<ShowBoard />
-					<NextPiece />
+					<NextShapes />
 				</div>
 			</div>
 		</div>
