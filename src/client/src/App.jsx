@@ -3,20 +3,24 @@ import { MiniTetrisContainer } from './components/MiniTetrisContainer';
 import { NextShapes } from './components/NextShapes';
 
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fixPiece, clearLine } from './reducers/board';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { setBoard, fixPiece, clearLine } from './reducers/board';
 import { setPiece, movePiece, rotatePiece, dropPiece } from './reducers/piece';
 import { setNextShapes } from './reducers/nextShapes';
-
 import usePieceRef from './hooks/usePieceRef';
 import { io } from 'socket.io-client';
 import { PORT, PROD } from '../../constants';
 
 function App() {
-	const URL = PROD ? undefined : `http://localhost:${PORT}`;
-	const socket = io(URL, { autoConnect: false });
-	const pieceRef = usePieceRef();
 	const dispatch = useDispatch();
+	const pieceRef = usePieceRef();
+	const URL = PROD ? undefined : `http://localhost:${PORT}`;
+	const { room, player_name } = useParams();
+	const socket = io(URL, {
+		auth: { room, player_name },
+		autoConnect: false,
+	});
 
 	useEffect(() => {
 		socket.connect();
@@ -25,9 +29,10 @@ function App() {
 			console.log('Connected to server');
 		});
 
-		socket.on('start', function (startPiece, nextShapes) {
-			dispatch(setPiece(startPiece));
+		socket.on('start', function (startBoard, nextShapes, startPiece) {
+			dispatch(setBoard(startBoard));
 			dispatch(setNextShapes(nextShapes));
+			dispatch(setPiece(startPiece));
 		});
 
 		socket.on('move', function (direction) {
@@ -73,7 +78,7 @@ function App() {
 			socket.removeAllListeners();
 			socket.disconnect();
 		};
-	}, []);
+	}, [room, player_name]);
 
 	const playerCount = 3;
 

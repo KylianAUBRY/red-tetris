@@ -3,6 +3,10 @@ class Rand {
 		this.seed = seed;
 	}
 
+	set(seed) {
+		this.seed = seed;
+	}
+
 	next() {
 		this.seed = (this.seed * 1103515245 + 12345) % 2147483648;
 		return this.seed / 2147483647;

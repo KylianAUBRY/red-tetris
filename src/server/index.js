@@ -23,8 +23,21 @@ const corsConfig = PROD
 const io = new Server(server, corsConfig);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-io.on('connect', function (socket) {
-	new Game(socket, Date.now());
+let games = new Map();
+
+io.on('connection', function (socket) {
+	console.log(socket.handshake.auth);
+
+	const room = socket.handshake.auth.room;
+	let game = games.get(room);
+	if (game) {
+		game.addPlayer(socket);
+	} else {
+		game = new Game(room);
+		game.addPlayer(socket);
+		game.startGame();
+		games.set(room, game);
+	}
 });
 
 if (PROD) {

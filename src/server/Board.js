@@ -1,4 +1,4 @@
-class Grid {
+class Board {
 	constructor(width, height) {
 		this.width = width;
 		this.height = height;
@@ -40,6 +40,12 @@ class Grid {
 			return count;
 		}, 0);
 	}
+
+	clearGrid() {
+		this.grid = Array.from({ length: this.height }, () =>
+			Array(this.width).fill(null)
+		);
+	}
 }
 
-export default Grid;
+export default Board;
