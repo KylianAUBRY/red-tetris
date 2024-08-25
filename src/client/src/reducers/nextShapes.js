@@ -8,13 +8,13 @@ const initialShape = [
 ];
 
 export const nextShapeSlice = createSlice({
-	name: 'nextShape',
+	name: 'nextShapes',
 	initialState: {
 		shapes: [initialShape, initialShape, initialShape, initialShape],
 	},
 	reducers: {
 		setNextShapes: (state, action) => {
-			state = action.payload;
+			state.shapes = action.payload;
 		},
 	},
 });

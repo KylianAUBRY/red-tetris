@@ -1,9 +1,27 @@
-.next-shape-grid{
+.nextShape-board{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 30px;
+}
+
+.nextShapes-grid{
 	display: grid;
-	grid-template-columns: repeat(4, 10px);
-	grid-template-rows: repeat(4, 10px);
-	margin-bottom: 10px;
-	background: white;
+	grid-template-rows: repeat(4, 25px);
+	grid-template-columns: repeat(4, 25px);
+	/* gap: 1px; */
+	
+	background: black;
+	/* margin-bottom: 10px; */
+	
 	/* width: 20%;
 	height: 100vh; */
+}
+
+
+.NextShape-cell{
+	width: 25px;
+	height: 25px;
+	background-color: #282c34;
 }

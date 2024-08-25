@@ -21,9 +21,9 @@ export const PIECE_O = [
 ];
 
 export const PIECE_T = [
-	[null, null, null],
 	['purple', 'purple', 'purple'],
 	[null, 'purple', null],
+	[null, null, null],
 ];
 
 export const PIECE_J = [
