@@ -7,7 +7,6 @@ import { selectGrid } from "../reducers/board";
 import { selectPiece } from "../reducers/piece";
 
 export function MiniTetrisContainer({ playerCount}) {
-	console.log('playerCount:', playerCount);
   const grid = useSelector(selectGrid);
   const piece = useSelector(selectPiece);
 
