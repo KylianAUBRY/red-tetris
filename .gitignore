@@ -9,3 +9,5 @@ dist
 
 .eslintcache
 .env
+
+.DS_Store

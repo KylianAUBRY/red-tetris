@@ -1,0 +1,11 @@
+.start-button {
+	background-color: var(--front-color);
+	border: none;
+	border-radius: 0.2em;
+	color: white;
+	padding: 0.9em 1.1em;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 1.5em;
+}

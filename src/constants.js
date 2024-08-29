@@ -8,6 +8,9 @@ export const ACCELERATION = 5;
 export const NEXT_PIECE_COUNT = 4;
 export const PIECE_COUNT = 7;
 
+export const BACK_COLOR = '#282c34';
+export const FRONT_COLOR = '#048b9a';
+
 export const PIECE_I = [
 	[null, null, null, null],
 	['cyan', 'cyan', 'cyan', 'cyan'],

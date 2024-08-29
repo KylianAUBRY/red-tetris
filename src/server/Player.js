@@ -56,14 +56,13 @@ class Player {
 		this.generateNextShapes();
 		this.newPiece();
 		this.gameEvent();
+		this.gravity = setInterval(() => {
+			this.movePiece('down');
+		}, this.delay);
 	}
 
 	gameEvent() {
 		if (this.connected) {
-			this.gravity = setInterval(() => {
-				this.movePiece('down');
-			}, this.delay);
-
 			this.socket.on('move', (direction) => {
 				this.movePiece(direction);
 			});

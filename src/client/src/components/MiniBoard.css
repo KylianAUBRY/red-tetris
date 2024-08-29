@@ -1,8 +1,8 @@
-.board-grid {
-	--cell-size: 4vmin;
+.mini-board-grid {
+	--cell-size: 1.5vmin;
 	display: grid;
 	grid-template-rows: repeat(var(--height), var(--cell-size));
 	grid-template-columns: repeat(var(--width), var(--cell-size));
-	gap: 0.4vmin;
+	margin: 0.3vmin;
 	background-color: black;
 }

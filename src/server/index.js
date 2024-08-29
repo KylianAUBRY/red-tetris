@@ -35,7 +35,6 @@ io.on('connection', function (socket) {
 	} else {
 		game = new Game(room);
 		game.addPlayer(socket);
-		game.startGame();
 		games.set(room, game);
 	}
 });

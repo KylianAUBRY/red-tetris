@@ -1,8 +1,10 @@
-import { ShowBoard } from './components/Board';
-import { MiniTetrisContainer } from './components/MiniTetrisContainer';
-import { NextShapes } from './components/NextShapes';
-
 import React, { useEffect } from 'react';
+import './App.css';
+import Board from './components/Board';
+import OpponentsBoard from './components/OpponentsBoards';
+import NextShapes from './components/NextShapes';
+import StartButton from './components/StartButton';
+
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setBoard, fixPiece, clearLine } from './reducers/board';
@@ -10,8 +12,14 @@ import { setPiece, movePiece, rotatePiece, dropPiece } from './reducers/piece';
 import { setNextShapes } from './reducers/nextShapes';
 import usePieceRef from './hooks/usePieceRef';
 import { io } from 'socket.io-client';
-import { PORT, PROD } from '../../constants';
-
+import {
+	WIDTH,
+	HEIGHT,
+	PORT,
+	PROD,
+	BACK_COLOR,
+	FRONT_COLOR,
+} from '../../constants';
 
 function App() {
 	const dispatch = useDispatch();
@@ -77,19 +85,31 @@ function App() {
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
 			socket.removeAllListeners();
-			socket.disconnect();
+			socket.disconnect(true);
 		};
 	}, [room, player_name]);
 
-	const playerCount = 3;
+	function handleStart() {
+		socket.emit('start');
+	}
+
+	const playerCount = 6;
+
+	const cssVariables = {
+		'--width': WIDTH,
+		'--height': HEIGHT,
+		'--back-color': BACK_COLOR,
+		'--front-color': FRONT_COLOR,
+	};
 
 	return (
-		<div className='game-box'>
-			<MiniTetrisContainer playerCount={playerCount} />
-			<div className='main-game-box'>
-				<div className='board-container'>
-					<ShowBoard />
+		<div className='game-grid' style={cssVariables}>
+			<OpponentsBoard opponentCount={playerCount} />
+			<div className='game-box'>
+				<div className='game-board-box'>
+					<Board />
 					<NextShapes />
+					<StartButton callback={handleStart} />
 				</div>
 			</div>
 		</div>

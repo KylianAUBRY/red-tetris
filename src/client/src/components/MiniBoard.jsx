@@ -1,16 +1,9 @@
 import React from 'react';
-import './Board.css';
+import './MiniBoard.css';
 
-import { useSelector } from 'react-redux';
-import { selectGrid } from '../reducers/board';
-import { selectPiece } from '../reducers/piece';
-
-export default function Board() {
-	const grid = useSelector(selectGrid);
-	const piece = useSelector(selectPiece);
-
+export default function MiniBoard({ grid, piece }) {
 	return (
-		<div className='board-grid'>
+		<div className='mini-board-grid'>
 			{grid.map((row, rowIndex) =>
 				row.map((cell, colIndex) => {
 					const tmpY = rowIndex - piece.y;

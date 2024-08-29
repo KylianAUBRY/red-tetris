@@ -4,6 +4,7 @@ class Game {
 	constructor(room) {
 		this.room = room;
 		this.players = new Map();
+		this.gameStarted = false;
 	}
 
 	addPlayer(socket) {
@@ -13,6 +14,16 @@ class Game {
 			player = new Player(player_name);
 			this.players.set(player_name, player);
 		}
+		socket.on('start', () => {
+			if (
+				!this.gameStarted &&
+				this.players.keys().next().value === player_name
+			) {
+				this.startGame();
+			} else {
+				socket.emit('error', 'Player not allowed to start game');
+			}
+		});
 		player.connection(socket);
 	}
 
@@ -21,6 +32,7 @@ class Game {
 		for (let player of this.players.values()) {
 			player.startGame(seed);
 		}
+		this.gameStarted = true;
 	}
 }
 

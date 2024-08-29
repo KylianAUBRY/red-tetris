@@ -1,42 +1,18 @@
 body {
-  margin: 0;
-  overflow: hidden;
+	margin: 0;
+	overflow: hidden;
 }
 
-.game-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  background: #282c34;
-}
-
-.main-game-box {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 65%;
-	height: 100vh;
-	background: #282c34;
-	gap: 20px;
-}
-
-.inner-square {
+.cell {
 	width: 100%;
 	height: 100%;
-	background-color: var(--piece-color, red);
-	border-radius: 3px;
+	background-color: var(--piece-color);
+	border-radius: calc(var(--cell-size) * 0.075);
 	box-shadow:
-	  inset 0 -3px 0 0 rgba(0, 0, 0, 0.2),
-	  inset 0 3px 0 0 rgba(255, 255, 255, 0.2),
-	  inset 3px 0 0 0 rgba(255, 255, 255, 0.2),
-	  inset -3px 0 0 0 rgba(0, 0, 0, 0.2),
-	  0 1px 3px rgba(0, 0, 0, 0.3);
+		inset 0 calc(var(--cell-size) * -0.075) 0 0 rgba(0, 0, 0, 0.2),
+		inset 0 calc(var(--cell-size) * 0.075) 0 0 rgba(255, 255, 255, 0.2),
+		inset calc(var(--cell-size) * 0.075) 0 0 0 rgba(255, 255, 255, 0.2),
+		inset calc(var(--cell-size) * -0.075) 0 0 0 rgba(0, 0, 0, 0.2),
+		0 calc(var(--cell-size) * 0.25) calc(var(--cell-size) * 0.075)
+			rgba(0, 0, 0, 0.3);
 }
-
-.board-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 20px;
-  }
