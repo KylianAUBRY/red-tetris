@@ -1,9 +1,17 @@
 import React from 'react';
 import './StartButton.css';
 
-export default function StartButton({ callback }) {
+import useSocket from '../hooks/useSocket';
+
+export default function StartButton() {
+	const socket = useSocket();
+
+	function startRequest() {
+		socket.emit('start');
+	}
+
 	return (
-		<button className='start-button' onClick={callback}>
+		<button className='start-button' onClick={startRequest}>
 			Start Game
 		</button>
 	);

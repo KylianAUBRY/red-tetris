@@ -26,8 +26,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 let games = new Map();
 
 io.on('connection', function (socket) {
-	console.log(socket.handshake.auth);
-
 	const room = socket.handshake.auth.room;
 	let game = games.get(room);
 	if (game) {

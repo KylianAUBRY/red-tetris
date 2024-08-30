@@ -10,7 +10,7 @@ class Game {
 	addPlayer(socket) {
 		const player_name = socket.handshake.auth.player_name;
 		let player = this.players.get(player_name);
-		if (player == undefined) {
+		if (!player) {
 			player = new Player(player_name);
 			this.players.set(player_name, player);
 		}

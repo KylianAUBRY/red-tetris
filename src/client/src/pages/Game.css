@@ -1,0 +1,25 @@
+.game-grid {
+	display: grid;
+	grid-template-rows: 1fr;
+	grid-template-columns: 0.5fr 1fr;
+	gap: 0.5vmin;
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--back-color);
+}
+
+.game-box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	max-height: 100vh;
+}
+
+.game-board-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5vmin;
+	max-height: 100vh;
+}

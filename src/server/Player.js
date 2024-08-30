@@ -155,15 +155,19 @@ class Player {
 	clearLine() {
 		let clearCount = this.board.clearLine();
 
-		clearInterval(this.gravity);
-		this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
-		this.gravity = setInterval(() => {
-			this.movePiece('down');
-		}, this.delay);
+		if (clearCount) {
+			clearInterval(this.gravity);
+			this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
+			this.gravity = setInterval(() => {
+				console.log('move down');
+				this.movePiece('down');
+			}, this.delay);
+		}
 	}
 
 	endGame() {
 		this.socket.removeAllListeners();
+		clearInterval(this.gravity);
 		this.inGame = false;
 		this.emit('end');
 	}
