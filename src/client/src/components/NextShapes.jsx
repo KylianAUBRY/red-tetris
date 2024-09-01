@@ -55,7 +55,7 @@ export default function NextShapes() {
 									piece[rowIndex].some(
 										(cell) => cell !== null && cell !== ''
 									) &&
-									collumIsEmpty(piece, colIndex) == false
+									!collumIsEmpty(piece, colIndex)
 								) {
 									return (
 										<div

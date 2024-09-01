@@ -29,7 +29,7 @@ function Game() {
 					<div className='game-board-box'>
 						<Board />
 						<NextShapes />
-						{!player.inGame && <StartButton />}
+						{player.host && !player.inGame && <StartButton />}
 					</div>
 				</div>
 			</div>

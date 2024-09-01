@@ -7,6 +7,7 @@ export const playerSlice = createSlice({
 		room: null,
 		inGame: false,
 		connected: false,
+		host: false,
 	},
 	reducers: {
 		setName(state, action) {
@@ -14,6 +15,9 @@ export const playerSlice = createSlice({
 		},
 		setRoom(state, action) {
 			state.room = action.payload;
+		},
+		setHost(state, action) {
+			state.host = action.payload;
 		},
 		startGame: (state) => {
 			state.inGame = true;
@@ -26,6 +30,8 @@ export const playerSlice = createSlice({
 		},
 		deconnection: (state) => {
 			state.connected = false;
+			state.inGame = false;
+			state.host = false;
 		},
 	},
 });
@@ -33,6 +39,7 @@ export const playerSlice = createSlice({
 export const {
 	setName,
 	setRoom,
+	setHost,
 	startGame,
 	endGame,
 	connection,

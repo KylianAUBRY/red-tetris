@@ -1,16 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { NEXT_PIECE_COUNT } from '../../../constants';
 
 const initialShape = [
-		[null, null, null, null],
-		[null, null, null, null],
-		[null, null, null, null],
-		[null, null, null, null],
+	[null, null, null, null],
+	[null, null, null, null],
+	[null, null, null, null],
+	[null, null, null, null],
 ];
 
 export const nextShapeSlice = createSlice({
 	name: 'nextShapes',
 	initialState: {
-		shapes: [initialShape, initialShape, initialShape, initialShape],
+		shapes: Array.from({ length: NEXT_PIECE_COUNT }, () => initialShape),
 	},
 	reducers: {
 		setNextShapes: (state, action) => {

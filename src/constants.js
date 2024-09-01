@@ -10,6 +10,7 @@ export const PIECE_COUNT = 7;
 
 export const BACK_COLOR = '#282c34';
 export const FRONT_COLOR = '#048b9a';
+export const PENALTY_COLOR = 'gray';
 
 export const PIECE_I = [
 	[null, null, null, null],

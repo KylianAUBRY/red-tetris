@@ -42,9 +42,7 @@ class Board {
 	}
 
 	clearGrid() {
-		this.grid = Array.from({ length: this.height }, () =>
-			Array(this.width).fill(null)
-		);
+		this.grid.forEach((row) => row.fill(null));
 	}
 }
 

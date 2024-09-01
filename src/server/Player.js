@@ -19,62 +19,58 @@ import {
 } from '../constants.js';
 
 class Player {
-	constructor(name) {
+	constructor(name, gameTopic) {
 		this.connected = false;
 		this.inGame = false;
 		this.socket = null;
 		this.name = name;
+		this.delay = MAX_DELAY;
 		this.rand = new Rand();
 		this.board = new Board(WIDTH, HEIGHT);
-		this.delay = MAX_DELAY;
-		this.nextShapes = [];
+		this.piece = null;
+		this.nextShapes = new Array();
+		this.gameTopic = gameTopic;
+		this.subList = new Array();
+		this.subGameTopic();
 	}
 
-	connection(socket) {
+	sub(event, callback) {
+		callback = callback.bind(this);
+		this.gameTopic.on(event, callback);
+		this.subList.push({ event, callback });
+	}
+
+	send(event, ...args) {
+		this.gameTopic.emit(event, this.name, ...args);
+	}
+
+	on(event, callback) {
 		if (this.connected) {
-			socket.emit('error', 'Already connected');
-			return false;
+			this.socket.on(event, callback.bind(this));
 		}
-		this.connected = true;
-		this.socket = socket;
-		if (this.inGame) {
-			this.gameEvent();
-		}
-		this.socket.on('disconnect', () => {
-			this.socket.removeAllListeners();
-			this.connected = false;
-		});
 	}
 
-	startGame(seed) {
-		this.inGame = true;
-		this.delay = MAX_DELAY;
-
-		this.rand.set(seed);
-		this.board.clearGrid();
-		this.generateNextShapes();
-		this.generateNextShapes();
-		this.newPiece();
-		this.gameEvent();
-		this.gravity = setInterval(() => {
-			this.movePiece('down');
-		}, this.delay);
-	}
-
-	gameEvent() {
+	emit(event, ...args) {
 		if (this.connected) {
-			this.socket.on('move', (direction) => {
-				this.movePiece(direction);
-			});
-
-			this.socket.on('rotate', () => {
-				this.rotatePiece();
-			});
-
-			this.socket.on('drop', () => {
-				this.dropPiece();
-			});
+			this.socket.emit(event, ...args);
 		}
+	}
+
+	subGameTopic() {
+		this.sub('start', this.startGame);
+	}
+
+	unsubGameTopic() {
+		for (const sub of this.subList) {
+			this.gameTopic.off(sub.event, sub.callback);
+		}
+		this.subList.length = 0;
+	}
+
+	setGameEvent() {
+		this.on('move', this.movePiece);
+		this.on('rotate', this.rotatePiece);
+		this.on('drop', this.dropPiece);
 		this.emit(
 			'start',
 			this.board,
@@ -83,9 +79,51 @@ class Player {
 		);
 	}
 
-	emit(event, ...args) {
+	clearGameEvent() {
+		this.socket.removeAllListeners('move');
+		this.socket.removeAllListeners('rotate');
+		this.socket.removeAllListeners('drop');
+	}
+
+	connection(socket) {
+		console.log('Player', this.name, 'trying to connect');
+		if (this.connected && socket.id !== this.socket.id) {
+			socket.emit('error', 'Already connected');
+			return false;
+		}
+		this.connected = true;
+		this.socket = socket;
+		this.on('disconnect', this.deconnection);
+		if (this.inGame) {
+			this.setGameEvent();
+		}
+		return true;
+	}
+
+	deconnection() {
 		if (this.connected) {
-			this.socket.emit(event, ...args);
+			this.socket.removeAllListeners();
+			this.socket.disconnect(true);
+			this.connected = false;
+			this.send('disconnect');
+			console.log('Player', this.name, 'disconnected');
+		}
+	}
+
+	startGame(seed) {
+		if (this.connected) {
+			this.inGame = true;
+			this.delay = MAX_DELAY;
+
+			this.rand.set(seed);
+			this.board.clearGrid();
+			this.generateNextShapes();
+			this.generateNextShapes();
+			this.newPiece();
+			this.setGameEvent();
+			this.gravity = setInterval(() => {
+				this.movePiece('down');
+			}, this.delay);
 		}
 	}
 
@@ -124,7 +162,7 @@ class Player {
 		let newPiece = this.piece.clone();
 
 		newPiece.move(direction);
-		if (this.board.pieceCollides(newPiece) == false) {
+		if (!this.board.pieceCollides(newPiece)) {
 			this.piece = newPiece;
 			this.emit('move', direction);
 		} else if (direction === 'down') {
@@ -136,7 +174,7 @@ class Player {
 		let newPiece = this.piece.clone();
 
 		newPiece.rotate(this);
-		if (this.board.pieceCollides(newPiece) == false) {
+		if (!this.board.pieceCollides(newPiece)) {
 			this.piece = newPiece;
 			this.emit('rotate');
 		}
@@ -144,7 +182,7 @@ class Player {
 
 	dropPiece() {
 		this.piece.y += 1;
-		while (this.board.pieceCollides(this.piece) == false) {
+		while (!this.board.pieceCollides(this.piece)) {
 			this.piece.y += 1;
 		}
 		this.piece.y -= 1;
@@ -153,23 +191,35 @@ class Player {
 	}
 
 	clearLine() {
-		let clearCount = this.board.clearLine();
+		const clearCount = this.board.clearLine();
 
 		if (clearCount) {
 			clearInterval(this.gravity);
 			this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
 			this.gravity = setInterval(() => {
-				console.log('move down');
 				this.movePiece('down');
 			}, this.delay);
 		}
 	}
 
 	endGame() {
-		this.socket.removeAllListeners();
+		this.reset();
+		this.send('end');
+		this.emit('end');
+	}
+
+	reset() {
 		clearInterval(this.gravity);
 		this.inGame = false;
-		this.emit('end');
+		this.board.clearGrid();
+		this.piece = null;
+		this.nextShapes = [];
+	}
+
+	delete() {
+		this.reset();
+		this.unsubGameTopic();
+		this.deconnection();
 	}
 }
 

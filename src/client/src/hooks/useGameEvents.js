@@ -10,6 +10,7 @@ import {
 } from '../reducers/piece';
 import { setNextShapes } from '../reducers/nextShapes';
 import {
+	setHost,
 	startGame,
 	endGame,
 	connection,
@@ -26,31 +27,31 @@ function useGameEvents(socket) {
 	useEffect(() => {
 		socket.connect();
 
-		socket.on('connect', function () {
+		socket.on('connect', () => {
 			console.log('Connected to server');
 			dispatch(connection());
 		});
 
-		socket.on('start', function (startBoard, nextShapes, startPiece) {
+		socket.on('start', (startBoard, nextShapes, startPiece) => {
 			dispatch(setBoard(startBoard));
 			dispatch(setNextShapes(nextShapes));
 			dispatch(setPiece(startPiece));
 			dispatch(startGame());
 		});
 
-		socket.on('move', function (direction) {
+		socket.on('move', (direction) => {
 			dispatch(movePiece(direction));
 		});
 
-		socket.on('rotate', function () {
+		socket.on('rotate', () => {
 			dispatch(rotatePiece());
 		});
 
-		socket.on('drop', function (y) {
+		socket.on('drop', (y) => {
 			dispatch(dropPiece(y));
 		});
 
-		socket.on('new', function (newPiece, nextShapes) {
+		socket.on('new', (newPiece, nextShapes) => {
 			if (playerRef.current.inGame) {
 				dispatch(fixPiece(pieceRef.current));
 				dispatch(clearLine());
@@ -59,16 +60,20 @@ function useGameEvents(socket) {
 			}
 		});
 
-		socket.on('end', function () {
+		socket.on('host', () => {
+			dispatch(setHost(true));
+		});
+
+		socket.on('end', () => {
 			dispatch(endGame());
 			console.log('Game Over');
 		});
 
-		socket.on('error', function (reason) {
+		socket.on('error', (reason) => {
 			console.log('Error:', reason);
 		});
 
-		socket.on('disconnect', function () {
+		socket.on('disconnect', () => {
 			console.log('Disconnected from server');
 			dispatch(deconnection());
 		});
@@ -76,13 +81,13 @@ function useGameEvents(socket) {
 		const handleKeyDown = (event) => {
 			if (event.key === 'ArrowLeft') {
 				socket.emit('move', 'left');
-			} else if (event.key == 'ArrowRight') {
+			} else if (event.key === 'ArrowRight') {
 				socket.emit('move', 'right');
-			} else if (event.key == 'ArrowDown') {
+			} else if (event.key === 'ArrowDown') {
 				socket.emit('move', 'down');
-			} else if (event.key == 'ArrowUp') {
+			} else if (event.key === 'ArrowUp') {
 				socket.emit('rotate');
-			} else if (event.key == ' ') {
+			} else if (event.key === ' ') {
 				socket.emit('drop');
 			}
 		};
@@ -92,7 +97,7 @@ function useGameEvents(socket) {
 			socket.removeAllListeners();
 			socket.disconnect(true);
 		};
-	}, [socket, pieceRef, playerRef, dispatch]);
+	}, [dispatch, socket, pieceRef, playerRef]);
 }
 
 export default useGameEvents;
