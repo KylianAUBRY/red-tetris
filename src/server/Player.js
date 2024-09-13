@@ -87,7 +87,7 @@ class Player {
 
 	connection(socket) {
 		console.log('Player', this.name, 'trying to connect');
-		if (this.connected && socket.id !== this.socket.id) {
+		if (this.connected && socket.sessionid !== this.socket.sessionid) {
 			socket.emit('error', 'Already connected');
 			return false;
 		}
@@ -103,7 +103,7 @@ class Player {
 	deconnection() {
 		if (this.connected) {
 			this.socket.removeAllListeners();
-			this.socket.disconnect(true);
+			this.socket.disconnect();
 			this.connected = false;
 			this.send('disconnect');
 			console.log('Player', this.name, 'disconnected');

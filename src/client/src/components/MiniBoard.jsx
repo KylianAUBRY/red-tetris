@@ -20,7 +20,7 @@ export default function MiniBoard({ grid, piece }) {
 					return (
 						<div
 							key={`${rowIndex}-${colIndex}`}
-							className={`cell`}
+							className={`mini-board-cell`}
 							style={{ '--piece-color': pieceCell || cell }}
 						>
 							{(pieceCell || cell) && <div className='inner-square'></div>}

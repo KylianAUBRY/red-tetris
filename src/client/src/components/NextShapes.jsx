@@ -60,7 +60,9 @@ export default function NextShapes() {
 									return (
 										<div
 											key={`${rowIndex}-${colIndex}`}
-											className={cell ? 'cell' : 'nextShapes-empty-cell'}
+											className={
+												cell ? 'nextShapes-cell' : 'nextShapes-empty-cell'
+											}
 											style={{ '--piece-color': cell }}
 										></div>
 									);

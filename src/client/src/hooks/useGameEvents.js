@@ -95,7 +95,7 @@ function useGameEvents(socket) {
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
 			socket.removeAllListeners();
-			socket.disconnect(true);
+			socket.disconnect();
 		};
 	}, [dispatch, socket, pieceRef, playerRef]);
 }
