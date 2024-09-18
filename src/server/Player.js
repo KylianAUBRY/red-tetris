@@ -87,7 +87,10 @@ class Player {
 
 	connection(socket) {
 		console.log('Player', this.name, 'trying to connect');
-		if (this.connected && socket.sessionid !== this.socket.sessionid) {
+		if (
+			this.connected &&
+			socket.handshake.auth.sessionid !== this.socket.handshake.auth.sessionid
+		) {
 			socket.emit('error', 'Already connected');
 			return false;
 		}

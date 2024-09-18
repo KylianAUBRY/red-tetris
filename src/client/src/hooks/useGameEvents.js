@@ -32,6 +32,10 @@ function useGameEvents(socket) {
 			dispatch(connection());
 		});
 
+		socket.on('newSession', (sessionid) => {
+			sessionStorage.setItem('sessionid', sessionid);
+		});
+
 		socket.on('start', (startBoard, nextShapes, startPiece) => {
 			dispatch(setBoard(startBoard));
 			dispatch(setNextShapes(nextShapes));

@@ -15,14 +15,19 @@ function Game() {
 	const dispatch = useDispatch();
 	const player = useSelector(selectPlayer);
 	const { room, player_name } = useParams();
+	const sessionid = sessionStorage.getItem('sessionid');
 
 	useEffect(() => {
 		dispatch(setName(player_name));
 		dispatch(setRoom(room));
 	}, [room, player_name, dispatch]);
 
+	console.log('Game', room, player_name, sessionid);
 	return (
-		<SocketProvider auth={{ room, player_name }} socketSetup={useGameEvents}>
+		<SocketProvider
+			auth={{ room, player_name, sessionid }}
+			socketSetup={useGameEvents}
+		>
 			<div className='game-grid'>
 				<OpponentsBoard opponentCount={6} />
 				<div className='game-box'>

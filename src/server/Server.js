@@ -8,9 +8,19 @@ class Server {
 		this.io.on('connection', this.onConnection.bind(this));
 	}
 
+	newSession(socket) {
+		const sessionid = crypto.randomUUID();
+		socket.emit('newSession', sessionid);
+		socket.handshake.auth.sessionid = sessionid;
+	}
+
 	onConnection(socket) {
 		const room = socket.handshake.auth.room;
+		const sessionid = socket.handshake.auth.sessionid;
 
+		if (!sessionid) {
+			this.newSession(socket);
+		}
 		if (!room) {
 			socket.emit('error', 'Room not provided');
 		} else {
