@@ -4,13 +4,14 @@ export const WIDTH = 10;
 export const HEIGHT = 20;
 export const MAX_DELAY = 1000;
 export const MIN_DELAY = 50;
-export const ACCELERATION = 5;
+export const ACCELERATION = 50;
 export const NEXT_PIECE_COUNT = 4;
 export const PIECE_COUNT = 7;
 
 export const BACK_COLOR = '#282c34';
 export const FRONT_COLOR = '#048b9a';
 export const PENALTY_COLOR = 'gray';
+export const SPECTRE_COLOR = 'gray';
 
 export const PIECE_I = [
 	[null, null, null, null],

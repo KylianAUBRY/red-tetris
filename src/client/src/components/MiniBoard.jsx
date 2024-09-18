@@ -1,33 +1,26 @@
 import React from 'react';
 import './MiniBoard.css';
+import {HEIGHT, SPECTRE_COLOR} from '../../../constants.js'
 
-export default function MiniBoard({ grid, piece }) {
+
+export default function MiniBoard({ heights }) {
+	let array = [5, 4, 3, 1, 6, 10, 15, 4, 0, 1]
+
 	return (
 		<div className='mini-board-grid'>
-			{grid.map((row, rowIndex) =>
-				row.map((cell, colIndex) => {
-					const tmpY = rowIndex - piece.y;
-					const tmpX = colIndex - piece.x;
-					var pieceCell = null;
-					if (
-						tmpY >= 0 &&
-						tmpX >= 0 &&
-						tmpY < piece.shape.length &&
-						tmpX < piece.shape.length
-					) {
-						pieceCell = piece.shape[tmpY][tmpX];
-					}
-					return (
-						<div
-							key={`${rowIndex}-${colIndex}`}
-							className={`mini-board-cell`}
-							style={{ '--piece-color': pieceCell || cell }}
-						>
-							{(pieceCell || cell) && <div className='inner-square'></div>}
-						</div>
-					);
-				})
-			)}
+			{Array.from({ length: HEIGHT }).map((_, i) => (
+				array.map((value, index) => {
+				const pieceCell = i >= (HEIGHT - value) ? SPECTRE_COLOR : null
+				return (
+					<div 
+						key={`${i} - ${index}`}
+						className={`mini-board-cell`}
+						style={{ '--piece-color': pieceCell}}
+					>
+					</div>
+				)
+			})
+			))}
 		</div>
 	);
 }
