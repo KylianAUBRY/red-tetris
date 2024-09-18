@@ -26,21 +26,21 @@ export const PIECE_O = [
 ];
 
 export const PIECE_T = [
-	['purple', 'purple', 'purple'],
 	[null, 'purple', null],
+	['purple', 'purple', 'purple'],
 	[null, null, null],
 ];
 
 export const PIECE_J = [
-	[null, 'blue', null],
-	[null, 'blue', null],
-	['blue', 'blue', null],
+	['blue', null, null],
+	['blue', 'blue', 'blue'],
+	[null, null, null],
 ];
 
 export const PIECE_L = [
-	[null, 'orange', null],
-	[null, 'orange', null],
-	[null, 'orange', 'orange'],
+	[null, null, 'orange'],
+	['orange', 'orange', 'orange'],
+	[null, null, null],
 ];
 
 export const PIECE_S = [

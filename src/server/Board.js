@@ -5,11 +5,17 @@ class Board {
 		this.grid = Array.from({ length: height }, () => Array(width).fill(null));
 	}
 
+	setCell(x, y, color) {
+		if (0 <= x && x < this.width && 0 <= y && y < this.height) {
+			this.grid[y][x] = color;
+		}
+	}
+
 	fixPiece(piece) {
 		piece.shape.forEach((row, y) => {
 			row.forEach((color, x) => {
 				if (color) {
-					this.grid[piece.y + y][piece.x + x] = color;
+					this.setCell(piece.x + x, piece.y + y, color);
 				}
 			});
 		});
@@ -20,11 +26,25 @@ class Board {
 			return row.some((color, x) => {
 				return (
 					color &&
+					0 <= piece.y + y &&
 					(piece.x + x < 0 ||
-						piece.y + y < 0 ||
 						this.width <= piece.x + x ||
 						this.height <= piece.y + y ||
 						this.grid[piece.y + y][piece.x + x])
+				);
+			});
+		});
+	}
+
+	pieceOutOfBounds(piece) {
+		return piece.shape.some((row, y) => {
+			return row.some((color, x) => {
+				return (
+					color &&
+					(piece.x + x < 0 ||
+						this.width <= piece.x + x ||
+						piece.y + y < 0 ||
+						this.height <= piece.y + y)
 				);
 			});
 		});

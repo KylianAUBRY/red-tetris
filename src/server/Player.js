@@ -149,16 +149,20 @@ class Player {
 		if (this.nextShapes.length <= PIECE_COUNT) {
 			this.generateNextShapes();
 		}
-		if (this.board.pieceCollides(this.piece)) {
-			this.endGame();
+		while (this.board.pieceCollides(this.piece)) {
+			this.piece.y -= 1;
 		}
 	}
 
 	fixPiece() {
-		this.board.fixPiece(this.piece);
-		this.newPiece();
-		this.clearLine();
-		this.emit('new', this.piece, this.nextShapes.slice(0, NEXT_PIECE_COUNT));
+		if (this.board.pieceOutOfBounds(this.piece)) {
+			this.endGame();
+		} else {
+			this.board.fixPiece(this.piece);
+			this.newPiece();
+			this.clearLine();
+			this.emit('new', this.piece, this.nextShapes.slice(0, NEXT_PIECE_COUNT));
+		}
 	}
 
 	movePiece(direction) {
