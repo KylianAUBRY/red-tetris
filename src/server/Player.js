@@ -21,10 +21,11 @@ import {
 class Player {
 	constructor(name, gameTopic) {
 		this.connected = false;
-		this.inGame = false;
+		this.lost = true;
 		this.host = false;
 		this.socket = null;
 		this.name = name;
+		this.score = 0;
 		this.delay = MAX_DELAY;
 		this.rand = new Rand();
 		this.board = new Board(WIDTH, HEIGHT);
@@ -59,6 +60,26 @@ class Player {
 
 	initGameTopic() {
 		this.gameSub('start', this.startGame);
+		this.gameSub('connect', (player_name) => {
+			if (player_name !== this.name) {
+				this.emit('addOpponent', {
+					name: player_name,
+					score: 0,
+					colHeights: Array.from({ length: WIDTH }, () => 0),
+				});
+			}
+		});
+		this.gameSub('newTurn', (player_name, opponent) => {
+			if (player_name !== this.name) {
+				this.emit('updateOpponent', opponent);
+			}
+		});
+		this.gameSub('disconnect', (player_name) => {
+			if (player_name !== this.name) {
+				this.emit('removeOpponent', player_name);
+			}
+		});
+		this.gameSub('end', this.endGame);
 	}
 
 	clearGameTopic() {
@@ -79,14 +100,15 @@ class Player {
 		}
 		this.connected = true;
 		this.socket = socket;
-		this.on('disconnect', this.deconnection);
-		if (this.inGame) {
+		this.gameSend('connect');
+		this.on('disconnect', this.disconnection);
+		if (!this.lost) {
 			this.initEvents();
 		}
 		return true;
 	}
 
-	deconnection() {
+	disconnection() {
 		if (this.connected) {
 			this.socket.removeAllListeners();
 			this.socket.disconnect();
@@ -122,20 +144,23 @@ class Player {
 	}
 
 	startGame(seed) {
-		if (this.connected) {
-			this.inGame = true;
-			this.delay = MAX_DELAY;
+		this.score = 0;
+		this.lost = false;
+		this.delay = MAX_DELAY;
 
-			this.rand.set(seed);
-			this.board.clearGrid();
-			this.generateNextShapes();
-			this.generateNextShapes();
-			this.newPiece();
-			this.initEvents();
-			this.gravity = setInterval(() => {
-				this.movePiece('down');
-			}, this.delay);
-		}
+		this.rand.set(seed);
+		this.board.clearGrid();
+		this.generateNextShapes();
+		this.generateNextShapes();
+		this.newPiece();
+		this.initEvents();
+		this.gravity = setInterval(() => {
+			this.movePiece('down');
+		}, this.delay);
+	}
+
+	endGame(last_player) {
+		this.emit('end', last_player);
 	}
 
 	generateNextShapes() {
@@ -171,18 +196,23 @@ class Player {
 
 	newTurn() {
 		if (this.board.pieceOutOfBounds(this.piece)) {
-			this.endGame();
+			this.lose();
 			return false;
 		}
 		this.board.fixPiece(this.piece);
 		this.clearLine();
 		this.newPiece();
 		if (this.board.pieceTotallyOutOfBounds(this.piece)) {
-			this.endGame();
+			this.lose();
 			return false;
 		}
 		this.updateGravity();
-		this.emit('new', this.piece, this.nextShapes.slice(0, NEXT_PIECE_COUNT));
+		this.gameSend('newTurn', this.toOpponent());
+		this.emit(
+			'newTurn',
+			this.piece,
+			this.nextShapes.slice(0, NEXT_PIECE_COUNT)
+		);
 		return true;
 	}
 
@@ -226,16 +256,24 @@ class Player {
 		}
 	}
 
-	endGame() {
+	toOpponent() {
+		return {
+			name: this.name,
+			score: this.score,
+			colHeights: this.board.toColHeights(),
+		};
+	}
+
+	lose() {
 		this.reset();
-		this.gameSend('end');
-		this.emit('end');
+		this.emit('lost');
+		this.gameSend('lost');
 	}
 
 	reset() {
 		this.clearEvents();
 		clearInterval(this.gravity);
-		this.inGame = false;
+		this.lost = true;
 		this.board.clearGrid();
 		this.piece = null;
 		this.nextShapes = [];
@@ -245,7 +283,7 @@ class Player {
 		this.reset();
 		this.host = false;
 		this.clearGameTopic();
-		this.deconnection();
+		this.disconnection();
 	}
 }
 

@@ -8,7 +8,7 @@
 		"prod": "run-s build prod-server",
 		"client": "vite",
 		"dev-server": "sleep 1 && nodemon src/server/index.js",
-		"prod-server": "node src/server/index.js",
+		"prod-server": "NODE_ENV='production' node src/server/index.js",
 		"build": "vite build --emptyOutDir",
 		"clear": "rm -rf dist",
 		"lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",

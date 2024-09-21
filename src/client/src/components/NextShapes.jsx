@@ -37,16 +37,16 @@ export default function NextShapes() {
 	return (
 		<div className='nextShapes-box'>
 			{shapes.map((piece, index) => {
-				var numberRow = countRow(piece);
-				var numberColumn = countColumn(piece);
+				var rowCount = countRow(piece);
+				var colCount = countColumn(piece);
 
 				return (
 					<div
 						key={index}
 						className='nextShapes-grid'
 						style={{
-							gridTemplateRows: `repeat(${numberRow}, 25px)`,
-							gridTemplateColumns: `repeat(${numberColumn}, 25px)`,
+							'--row-count': rowCount,
+							'--col-count': colCount,
 						}}
 					>
 						{piece.map((row, rowIndex) =>
@@ -63,7 +63,7 @@ export default function NextShapes() {
 											className={
 												cell ? 'nextShapes-cell' : 'nextShapes-empty-cell'
 											}
-											style={{ '--piece-color': cell }}
+											style={{ '--cell-color': cell }}
 										></div>
 									);
 								}

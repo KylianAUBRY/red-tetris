@@ -5,46 +5,45 @@ export const playerSlice = createSlice({
 	initialState: {
 		name: null,
 		room: null,
-		inGame: false,
+		lost: true,
 		connected: false,
 		host: false,
 	},
 	reducers: {
-		setName(state, action) {
+		setPlayerName(state, action) {
 			state.name = action.payload;
 		},
-		setRoom(state, action) {
+		setPlayerRoom(state, action) {
 			state.room = action.payload;
 		},
-		setHost(state, action) {
+		setPlayerHost(state, action) {
 			state.host = action.payload;
 		},
-		startGame: (state) => {
-			state.inGame = true;
+		playerStart: (state) => {
+			state.lost = false;
 		},
-		endGame: (state) => {
-			state.inGame = false;
+		playerLost: (state) => {
+			state.lost = true;
 		},
-		connection: (state) => {
+		playerConnection: (state) => {
 			state.connected = true;
 		},
-		deconnection: (state) => {
+		playerDisconnection: (state) => {
 			state.connected = false;
-			state.inGame = false;
+			state.lost = true;
 			state.host = false;
 		},
 	},
 });
 
 export const {
-	setName,
-	setRoom,
-	setHost,
-	startGame,
-	endGame,
-	connection,
-	deconnection,
-	reset,
+	setPlayerName,
+	setPlayerRoom,
+	setPlayerHost,
+	playerStart,
+	playerLost,
+	playerConnection,
+	playerDisconnection,
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;

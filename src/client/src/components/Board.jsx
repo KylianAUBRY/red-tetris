@@ -28,10 +28,8 @@ export default function Board() {
 						<div
 							key={`${rowIndex}-${colIndex}`}
 							className={`board-cell`}
-							style={{ '--piece-color': pieceCell || cell }}
-						>
-							{(pieceCell || cell) && <div className='inner-square'></div>}
-						</div>
+							style={{ '--cell-color': pieceCell || cell }}
+						></div>
 					);
 				})
 			)}

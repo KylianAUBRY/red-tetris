@@ -15,7 +15,7 @@ function App() {
 	const cssVariables = {
 		'--width': WIDTH,
 		'--height': HEIGHT,
-		'--next-shapes-count': NEXT_PIECE_COUNT,
+		'--next-piece-count': NEXT_PIECE_COUNT,
 		'--back-color': BACK_COLOR,
 		'--front-color': FRONT_COLOR,
 	};

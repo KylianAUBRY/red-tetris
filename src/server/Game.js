@@ -5,7 +5,7 @@ class Game {
 	constructor(room, serverTopic) {
 		this.room = room;
 		this.players = new Map();
-		this.gameStarted = false;
+		this.started = false;
 		this.topic = new EventEmitter();
 		this.serverTopic = serverTopic;
 		this.serverSubArray = new Array();
@@ -14,13 +14,13 @@ class Game {
 	}
 
 	initTopic() {
-		this.topic.on('end', (player_name) => {
-			if (!this.players.values().some((player) => player.inGame)) {
-				this.endGame(player_name);
+		this.topic.on('lost', (player_name) => {
+			if (this.players.values().every((player) => player.lost)) {
+				this.end(player_name);
 			}
 		});
 		this.topic.on('disconnect', (player_name) => {
-			if (!this.gameStarted) {
+			if (!this.started) {
 				this.removePlayer(player_name);
 			}
 		});
@@ -56,6 +56,11 @@ class Game {
 			}
 			if (player.connection(socket)) {
 				socket.on('start', this.startRequest.bind(this, socket));
+				this.players.forEach((player) => {
+					if (player.name !== player_name) {
+						socket.emit('addOpponent', player.toOpponent());
+					}
+				});
 				if (this.players.size === 1) {
 					player.toHost(true);
 				}
@@ -81,35 +86,36 @@ class Game {
 
 	startRequest(socket) {
 		if (
-			!this.gameStarted &&
+			!this.started &&
 			this.players.values().next().value.socket.id === socket.id
 		) {
-			this.startGame();
+			this.start();
 		} else {
 			socket.emit('error', 'Player not allowed to start game');
 		}
 	}
 
-	startGame() {
+	start() {
 		this.topic.emit('start', Date.now());
-		this.gameStarted = true;
+		this.started = true;
 	}
 
-	endGame() {
+	end(last_player) {
 		console.log('Game ended');
 		this.players.forEach((player, player_name) => {
 			if (!player.connected) {
 				this.removePlayer(player_name);
 			}
 		});
-		this.gameStarted = false;
+		this.topic.emit('end', last_player);
+		this.started = false;
 	}
 
 	reset() {
 		this.topic.removeAllListeners();
 		this.players.forEach((player) => player.delete());
 		this.players.clear();
-		this.gameStarted = false;
+		this.started = false;
 	}
 
 	delete() {

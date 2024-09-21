@@ -64,6 +64,13 @@ class Board {
 		});
 	}
 
+	toColHeights() {
+		return Array.from({ length: this.width }, (_, colIndex) => {
+			const firstBlock = this.grid.findIndex((row) => row[colIndex]);
+			return firstBlock !== -1 ? this.height - firstBlock : 0;
+		});
+	}
+
 	clearLine() {
 		return this.grid.reduce((count, row, y) => {
 			if (row.every((color) => color)) {

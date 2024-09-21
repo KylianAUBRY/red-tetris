@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useEffect, useRef } from 'react';
 
 import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,13 +12,21 @@ import {
 } from '../reducers/piece';
 import { setNextShapes } from '../reducers/nextShapes';
 import {
-	setHost,
-	startGame,
-	endGame,
-	connection,
-	deconnection,
+	setPlayerHost,
+	playerStart,
+	playerLost,
+	playerConnection,
+	playerDisconnection,
 	selectPlayer,
 } from '../reducers/player';
+import {
+	startGame,
+	endGame,
+	addOpponent,
+	removeOpponent,
+	updateOpponent,
+	gameDisconnection,
+} from '../reducers/game';
 import useBoxRef from '../hooks/useBoxRef';
 import { PROD, PORT } from '../../../constants';
 
@@ -41,8 +49,8 @@ export default function GameSocketProvider({ room, player_name, children }) {
 		socket.connect();
 
 		socket.on('connect', () => {
+			dispatch(playerConnection());
 			console.log('Connected to server');
-			dispatch(connection());
 		});
 
 		socket.on('newSession', (sessionid) => {
@@ -53,6 +61,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			dispatch(setBoard(startBoard));
 			dispatch(setNextShapes(nextShapes));
 			dispatch(setPiece(startPiece));
+			dispatch(playerStart());
 			dispatch(startGame());
 		});
 
@@ -68,8 +77,8 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			dispatch(dropPiece(y));
 		});
 
-		socket.on('new', (newPiece, nextShapes) => {
-			if (playerRef.current.inGame) {
+		socket.on('newTurn', (newPiece, nextShapes) => {
+			if (!playerRef.current.lost) {
 				dispatch(fixPiece(pieceRef.current));
 				dispatch(clearLine());
 				dispatch(setNextShapes(nextShapes));
@@ -78,21 +87,40 @@ export default function GameSocketProvider({ room, player_name, children }) {
 		});
 
 		socket.on('host', (isNewRoom) => {
-			dispatch(setHost(true));
+			dispatch(setPlayerHost(true));
 		});
 
-		socket.on('end', () => {
+		socket.on('lost', () => {
+			dispatch(playerLost());
+			console.log('Lost');
+		});
+
+		socket.on('end', (last_player) => {
 			dispatch(endGame());
 			console.log('Game Over');
+			console.log('Last:', last_player);
 		});
 
 		socket.on('error', (reason) => {
 			console.log('Error:', reason);
 		});
 
+		socket.on('addOpponent', (opponent) => {
+			dispatch(addOpponent(opponent));
+		});
+
+		socket.on('updateOpponent', (opponent) => {
+			dispatch(updateOpponent(opponent));
+		});
+
+		socket.on('removeOpponent', (opponent) => {
+			dispatch(removeOpponent(opponent));
+		});
+
 		socket.on('disconnect', () => {
+			dispatch(playerDisconnection());
+			dispatch(gameDisconnection());
 			console.log('Disconnected from server');
-			dispatch(deconnection());
 		});
 
 		const handleKeyDown = (event) => {
