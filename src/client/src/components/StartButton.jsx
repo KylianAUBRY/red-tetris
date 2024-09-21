@@ -1,13 +1,13 @@
 import React from 'react';
 import './StartButton.css';
 
-import useSocket from '../hooks/useSocket';
+import useSocketRef from '../hooks/useSocketRef';
 
 export default function StartButton() {
-	const socket = useSocket();
+	const socketRef = useSocketRef();
 
 	function startRequest() {
-		socket.emit('start');
+		socketRef.current.emit('start');
 	}
 
 	return (

@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
+
+import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBoard, fixPiece, clearLine } from '../reducers/board';
 import {
@@ -17,14 +19,25 @@ import {
 	deconnection,
 	selectPlayer,
 } from '../reducers/player';
-import useBoxRef from './useBoxRef';
+import useBoxRef from '../hooks/useBoxRef';
+import { PROD, PORT } from '../../../constants';
 
-function useGameEvents(socket) {
+export const SocketContext = createContext(null);
+
+export default function GameSocketProvider({ room, player_name, children }) {
 	const dispatch = useDispatch();
+	const URL = PROD ? undefined : `http://localhost:${PORT}`;
+	const sessionid = sessionStorage.getItem('sessionid');
 	const pieceRef = useBoxRef(useSelector(selectPiece));
 	const playerRef = useBoxRef(useSelector(selectPlayer));
+	const socketRef = useRef(null);
 
 	useEffect(() => {
+		const socket = io(URL, {
+			auth: { room, player_name, sessionid },
+			autoConnect: false,
+		});
+
 		socket.connect();
 
 		socket.on('connect', () => {
@@ -64,7 +77,7 @@ function useGameEvents(socket) {
 			}
 		});
 
-		socket.on('host', () => {
+		socket.on('host', (isNewRoom) => {
 			dispatch(setHost(true));
 		});
 
@@ -96,12 +109,19 @@ function useGameEvents(socket) {
 			}
 		};
 		window.addEventListener('keydown', handleKeyDown);
+
+		socketRef.current = socket;
+
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
-			socket.removeAllListeners();
 			socket.disconnect();
+			socket.removeAllListeners();
 		};
-	}, [dispatch, socket, pieceRef, playerRef]);
-}
+	}, [dispatch, URL, room, player_name, sessionid, pieceRef, playerRef]);
 
-export default useGameEvents;
+	return (
+		<SocketContext.Provider value={socketRef}>
+			{children}
+		</SocketContext.Provider>
+	);
+}

@@ -22,6 +22,7 @@ class Player {
 	constructor(name, gameTopic) {
 		this.connected = false;
 		this.inGame = false;
+		this.host = false;
 		this.socket = null;
 		this.name = name;
 		this.delay = MAX_DELAY;
@@ -30,17 +31,17 @@ class Player {
 		this.piece = null;
 		this.nextShapes = new Array();
 		this.gameTopic = gameTopic;
-		this.subList = new Array();
-		this.subGameTopic();
+		this.gameSubArray = new Array();
+		this.initGameTopic();
 	}
 
-	sub(event, callback) {
+	gameSub(event, callback) {
 		callback = callback.bind(this);
 		this.gameTopic.on(event, callback);
-		this.subList.push({ event, callback });
+		this.gameSubArray.push({ event, callback });
 	}
 
-	send(event, ...args) {
+	gameSend(event, ...args) {
 		this.gameTopic.emit(event, this.name, ...args);
 	}
 
@@ -56,33 +57,15 @@ class Player {
 		}
 	}
 
-	subGameTopic() {
-		this.sub('start', this.startGame);
+	initGameTopic() {
+		this.gameSub('start', this.startGame);
 	}
 
-	unsubGameTopic() {
-		for (const sub of this.subList) {
-			this.gameTopic.off(sub.event, sub.callback);
+	clearGameTopic() {
+		for (const gameSub of this.gameSubArray) {
+			this.gameTopic.off(gameSub.event, gameSub.callback);
 		}
-		this.subList.length = 0;
-	}
-
-	setGameEvent() {
-		this.on('move', this.movePiece);
-		this.on('rotate', this.rotatePiece);
-		this.on('drop', this.dropPiece);
-		this.emit(
-			'start',
-			this.board,
-			this.nextShapes.slice(0, NEXT_PIECE_COUNT),
-			this.piece
-		);
-	}
-
-	clearGameEvent() {
-		this.socket.removeAllListeners('move');
-		this.socket.removeAllListeners('rotate');
-		this.socket.removeAllListeners('drop');
+		this.gameSubArray.length = 0;
 	}
 
 	connection(socket) {
@@ -98,7 +81,7 @@ class Player {
 		this.socket = socket;
 		this.on('disconnect', this.deconnection);
 		if (this.inGame) {
-			this.setGameEvent();
+			this.initEvents();
 		}
 		return true;
 	}
@@ -108,8 +91,33 @@ class Player {
 			this.socket.removeAllListeners();
 			this.socket.disconnect();
 			this.connected = false;
-			this.send('disconnect');
-			console.log('Player', this.name, 'disconnected');
+			this.gameSend('disconnect');
+		}
+	}
+
+	initEvents() {
+		this.on('move', this.movePiece);
+		this.on('rotate', this.rotatePiece);
+		this.on('drop', this.dropPiece);
+		this.emit(
+			'start',
+			this.board,
+			this.nextShapes.slice(0, NEXT_PIECE_COUNT),
+			this.piece
+		);
+	}
+
+	clearEvents() {
+		this.socket.removeAllListeners('move');
+		this.socket.removeAllListeners('rotate');
+		this.socket.removeAllListeners('drop');
+	}
+
+	toHost(isNewRoom) {
+		if (!this.host) {
+			this.host = true;
+			this.emit('host', isNewRoom);
+			console.log('Player', this.name, 'is the host');
 		}
 	}
 
@@ -123,7 +131,7 @@ class Player {
 			this.generateNextShapes();
 			this.generateNextShapes();
 			this.newPiece();
-			this.setGameEvent();
+			this.initEvents();
 			this.gravity = setInterval(() => {
 				this.movePiece('down');
 			}, this.delay);
@@ -143,6 +151,13 @@ class Player {
 		this.nextShapes.push(...this.rand.shuf(shapesBundle));
 	}
 
+	updateGravity() {
+		clearInterval(this.gravity);
+		this.gravity = setInterval(() => {
+			this.movePiece('down');
+		}, this.delay);
+	}
+
 	newPiece() {
 		let newShape = this.nextShapes.shift();
 		this.piece = new Piece(newShape, Math.floor((WIDTH - newShape.length) / 2));
@@ -154,15 +169,21 @@ class Player {
 		}
 	}
 
-	fixPiece() {
+	newTurn() {
 		if (this.board.pieceOutOfBounds(this.piece)) {
 			this.endGame();
-		} else {
-			this.board.fixPiece(this.piece);
-			this.newPiece();
-			this.clearLine();
-			this.emit('new', this.piece, this.nextShapes.slice(0, NEXT_PIECE_COUNT));
+			return false;
 		}
+		this.board.fixPiece(this.piece);
+		this.clearLine();
+		this.newPiece();
+		if (this.board.pieceTotallyOutOfBounds(this.piece)) {
+			this.endGame();
+			return false;
+		}
+		this.updateGravity();
+		this.emit('new', this.piece, this.nextShapes.slice(0, NEXT_PIECE_COUNT));
+		return true;
 	}
 
 	movePiece(direction) {
@@ -173,7 +194,7 @@ class Player {
 			this.piece = newPiece;
 			this.emit('move', direction);
 		} else if (direction === 'down') {
-			this.fixPiece();
+			this.newTurn();
 		}
 	}
 
@@ -194,28 +215,25 @@ class Player {
 		}
 		this.piece.y -= 1;
 		this.emit('drop', this.piece.y);
-		this.fixPiece();
+		this.newTurn();
 	}
 
 	clearLine() {
 		const clearCount = this.board.clearLine();
 
 		if (clearCount) {
-			clearInterval(this.gravity);
 			this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
-			this.gravity = setInterval(() => {
-				this.movePiece('down');
-			}, this.delay);
 		}
 	}
 
 	endGame() {
 		this.reset();
-		this.send('end');
+		this.gameSend('end');
 		this.emit('end');
 	}
 
 	reset() {
+		this.clearEvents();
 		clearInterval(this.gravity);
 		this.inGame = false;
 		this.board.clearGrid();
@@ -225,7 +243,8 @@ class Player {
 
 	delete() {
 		this.reset();
-		this.unsubGameTopic();
+		this.host = false;
+		this.clearGameTopic();
 		this.deconnection();
 	}
 }

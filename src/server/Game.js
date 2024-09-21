@@ -2,15 +2,18 @@ import EventEmitter from 'node:events';
 import Player from './Player.js';
 
 class Game {
-	constructor(room) {
+	constructor(room, serverTopic) {
 		this.room = room;
 		this.players = new Map();
 		this.gameStarted = false;
 		this.topic = new EventEmitter();
-		this.setTopic();
+		this.serverTopic = serverTopic;
+		this.serverSubArray = new Array();
+		this.initTopic();
+		console.log('Room', this.room, 'created');
 	}
 
-	setTopic() {
+	initTopic() {
 		this.topic.on('end', (player_name) => {
 			if (!this.players.values().some((player) => player.inGame)) {
 				this.endGame(player_name);
@@ -18,15 +21,26 @@ class Game {
 		});
 		this.topic.on('disconnect', (player_name) => {
 			if (!this.gameStarted) {
-				this.players.get(player_name).delete();
-				this.players.delete(player_name);
-				if (this.players.size === 0) {
-					console.log('Room', this.room, 'is empty');
-				} else {
-					this.players.values().next().value.emit('host', 1);
-				}
+				this.removePlayer(player_name);
 			}
 		});
+	}
+
+	serverSub(event, callback) {
+		callback = callback.bind(this);
+		this.serverTopic.on(event, callback);
+		this.serverSubArray.push({ event, callback });
+	}
+
+	serverSend(event, ...args) {
+		this.serverTopic.emit(event, this.room, ...args);
+	}
+
+	clearServerTopic() {
+		for (const serverSub of this.serverSubArray) {
+			this.serverTopic.off(serverSub.event, serverSub.callback);
+		}
+		this.serverSubArray.length = 0;
 	}
 
 	addPlayer(socket) {
@@ -43,9 +57,24 @@ class Game {
 			if (player.connection(socket)) {
 				socket.on('start', this.startRequest.bind(this, socket));
 				if (this.players.size === 1) {
-					socket.emit('host', 0);
+					player.toHost(true);
 				}
 				console.log('Player', player_name, 'connected to room', this.room);
+			}
+		}
+	}
+
+	removePlayer(player_name) {
+		const player = this.players.get(player_name);
+		if (player) {
+			console.log('Player', player_name, 'disconnected from room', this.room);
+			player.delete();
+			this.players.delete(player_name);
+			if (this.players.size === 0) {
+				console.log('Room', this.room, 'is empty');
+				this.serverSend('empty', this.room);
+			} else {
+				this.players.values().next().value.toHost(false);
 			}
 		}
 	}
@@ -70,8 +99,7 @@ class Game {
 		console.log('Game ended');
 		this.players.forEach((player, player_name) => {
 			if (!player.connected) {
-				player.delete();
-				this.players.delete(player_name);
+				this.removePlayer(player_name);
 			}
 		});
 		this.gameStarted = false;
@@ -82,6 +110,11 @@ class Game {
 		this.players.forEach((player) => player.delete());
 		this.players.clear();
 		this.gameStarted = false;
+	}
+
+	delete() {
+		this.reset();
+		this.clearServerTopic();
 	}
 }
 

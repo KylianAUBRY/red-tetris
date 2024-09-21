@@ -44,6 +44,7 @@ export const {
 	endGame,
 	connection,
 	deconnection,
+	reset,
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;

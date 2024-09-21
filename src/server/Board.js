@@ -50,6 +50,20 @@ class Board {
 		});
 	}
 
+	pieceTotallyOutOfBounds(piece) {
+		return piece.shape.every((row, y) => {
+			return row.every((color, x) => {
+				return (
+					color &&
+					(piece.x + x < 0 ||
+						this.width <= piece.x + x ||
+						piece.y + y < 0 ||
+						this.height <= piece.y + y)
+				);
+			});
+		});
+	}
+
 	clearLine() {
 		return this.grid.reduce((count, row, y) => {
 			if (row.every((color) => color)) {
