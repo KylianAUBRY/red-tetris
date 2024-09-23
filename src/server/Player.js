@@ -65,7 +65,7 @@ class Player {
 				this.emit('addOpponent', {
 					name: player_name,
 					score: 0,
-					colHeights: Array.from({ length: WIDTH }, () => 0),
+					colHeights: Array(WIDTH).fill(0),
 				});
 			}
 		});
@@ -200,7 +200,10 @@ class Player {
 			return false;
 		}
 		this.board.fixPiece(this.piece);
-		this.clearLine();
+		const clearCount = this.board.clearLine();
+		if (clearCount) {
+			this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
+		}
 		this.newPiece();
 		if (this.board.pieceTotallyOutOfBounds(this.piece)) {
 			this.lose();
@@ -246,14 +249,6 @@ class Player {
 		this.piece.y -= 1;
 		this.emit('drop', this.piece.y);
 		this.newTurn();
-	}
-
-	clearLine() {
-		const clearCount = this.board.clearLine();
-
-		if (clearCount) {
-			this.delay = Math.max(MIN_DELAY, this.delay - ACCELERATION * clearCount);
-		}
 	}
 
 	toOpponent() {

@@ -54,11 +54,11 @@ class Board {
 		return piece.shape.every((row, y) => {
 			return row.every((color, x) => {
 				return (
-					color &&
-					(piece.x + x < 0 ||
-						this.width <= piece.x + x ||
-						piece.y + y < 0 ||
-						this.height <= piece.y + y)
+					!color ||
+					piece.x + x < 0 ||
+					this.width <= piece.x + x ||
+					piece.y + y < 0 ||
+					this.height <= piece.y + y
 				);
 			});
 		});
@@ -81,6 +81,13 @@ class Board {
 			return count;
 		}, 0);
 	}
+
+	/*
+	penalityLines(count) {
+		line = Array(this.width).fill(8)
+		
+	}
+	*/
 
 	clearGrid() {
 		this.grid.forEach((row) => row.fill(null));

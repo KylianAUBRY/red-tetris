@@ -5,7 +5,7 @@ import { HEIGHT, SPECTRE_COLOR } from '../../../constants.js';
 export default function BoardSpectre({ colHeights }) {
 	return (
 		<div className='board-spectre-grid'>
-			{Array.from({ length: HEIGHT }).map((_, rowIndex) =>
+			{Array.from({ length: HEIGHT }, (_, rowIndex) =>
 				colHeights.map((colHeight, colIndex) => {
 					const cellColor =
 						rowIndex >= HEIGHT - colHeight ? SPECTRE_COLOR : null;
