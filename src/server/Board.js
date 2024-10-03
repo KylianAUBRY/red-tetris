@@ -82,12 +82,14 @@ class Board {
 		}, 0);
 	}
 
-	/*
-	penalityLines(count) {
-		line = Array(this.width).fill(8)
-		
+	addPenalityLines(line, count) {
+		for (let i = 0; i < count; i++) {
+			if (this.grid[0].every((color) => !color)) {
+				this.grid.splice(0, 1);
+			}
+			this.grid.push(line);
+		}
 	}
-	*/
 
 	clearGrid() {
 		this.grid.forEach((row) => row.fill(null));

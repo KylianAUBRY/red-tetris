@@ -21,12 +21,20 @@ export const playerSlice = createSlice({
 				(opponent) => opponent.name !== action.payload
 			);
 		},
-		updateOpponent: (state, action) => {
+		updateOpponentBoard: (state, action) => {
 			const opponent = state.opponents.find(
 				(opponent) => opponent.name === action.payload.name
 			);
 			if (opponent) {
 				opponent.colHeights = action.payload.colHeights;
+			}
+		},
+		updateOpponentStats: (state, action) => {
+			const opponent = state.opponents.find(
+				(opponent) => opponent.name === action.payload.name
+			);
+			if (opponent) {
+				opponent.stats = action.payload.stats;
 			}
 		},
 		gameDisconnection: (state) => {
@@ -41,7 +49,8 @@ export const {
 	endGame,
 	addOpponent,
 	removeOpponent,
-	updateOpponent,
+	updateOpponentBoard,
+	updateOpponentStats,
 	gameDisconnection,
 } = playerSlice.actions;
 

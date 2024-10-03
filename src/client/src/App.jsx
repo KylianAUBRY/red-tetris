@@ -7,8 +7,11 @@ import {
 	WIDTH,
 	HEIGHT,
 	NEXT_PIECE_COUNT,
+	FONT_COLOR,
 	BACK_COLOR,
 	FRONT_COLOR,
+	FRONT_BACK_COLOR,
+	BOARD_COLOR,
 } from '../../constants';
 
 function App() {
@@ -16,8 +19,11 @@ function App() {
 		'--width': WIDTH,
 		'--height': HEIGHT,
 		'--next-piece-count': NEXT_PIECE_COUNT,
+		'--font-color': FONT_COLOR,
 		'--back-color': BACK_COLOR,
 		'--front-color': FRONT_COLOR,
+		'--front-back-color': FRONT_BACK_COLOR,
+		'--board-color': BOARD_COLOR,
 	};
 
 	return (

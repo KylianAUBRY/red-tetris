@@ -2,7 +2,12 @@ import React, { createContext, useEffect, useRef } from 'react';
 
 import { io } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBoard, fixPiece, clearLine } from '../reducers/board';
+import {
+	setBoard,
+	fixPiece,
+	clearLine,
+	penalityLines,
+} from '../reducers/board';
 import {
 	setPiece,
 	movePiece,
@@ -12,7 +17,8 @@ import {
 } from '../reducers/piece';
 import { setNextShapes } from '../reducers/nextShapes';
 import {
-	setPlayerHost,
+	setPlayerOwner,
+	updateStats,
 	playerStart,
 	playerLost,
 	playerConnection,
@@ -24,7 +30,8 @@ import {
 	endGame,
 	addOpponent,
 	removeOpponent,
-	updateOpponent,
+	updateOpponentBoard,
+	updateOpponentStats,
 	gameDisconnection,
 } from '../reducers/game';
 import useBoxRef from '../hooks/useBoxRef';
@@ -86,13 +93,22 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			}
 		});
 
-		socket.on('host', (isNewRoom) => {
-			dispatch(setPlayerHost(true));
+		socket.on('owner', (isNewRoom) => {
+			dispatch(setPlayerOwner(true));
+		});
+
+		socket.on('updateStats', (stats) => {
+			dispatch(updateStats(stats));
+			console.log('Stats:', stats);
 		});
 
 		socket.on('lost', () => {
 			dispatch(playerLost());
 			console.log('Lost');
+		});
+
+		socket.on('penality', (line, count) => {
+			dispatch(penalityLines({ line, count }));
 		});
 
 		socket.on('end', (last_player) => {
@@ -105,12 +121,16 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			console.log('Error:', reason);
 		});
 
-		socket.on('addOpponent', (opponent) => {
-			dispatch(addOpponent(opponent));
+		socket.on('addOpponent', (name, stats, colHeights) => {
+			dispatch(addOpponent({ name, stats, colHeights }));
 		});
 
-		socket.on('updateOpponent', (opponent) => {
-			dispatch(updateOpponent(opponent));
+		socket.on('updateOpponentBoard', (name, colHeights) => {
+			dispatch(updateOpponentBoard({ name, colHeights }));
+		});
+
+		socket.on('updateOpponentStats', (name, stats) => {
+			dispatch(updateOpponentStats({ name, stats }));
 		});
 
 		socket.on('removeOpponent', (opponent) => {

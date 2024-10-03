@@ -6,7 +6,8 @@ import useSocketRef from '../hooks/useSocketRef';
 export default function StartButton() {
 	const socketRef = useSocketRef();
 
-	function startRequest() {
+	function startRequest(event) {
+		event.target.blur();
 		socketRef.current.emit('start');
 	}
 

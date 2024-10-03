@@ -4,73 +4,57 @@ import './NextShapes.css';
 import { useSelector } from 'react-redux';
 import { selectNextShape } from '../reducers/nextShapes';
 
-function countRow(map) {
-	let count = 0;
+function fitShape(shape) {
+	let top = 0;
+	let bottom = shape.length;
+	let left = shape[0].length;
+	let right = 0;
 
-	for (let i = 0; i < map.length; i++) {
-		if (map[i].some((cell) => cell !== null && cell !== '')) count++;
-	}
-	return count;
-}
+	shape.forEach((row, y) => {
+		row.forEach((cell, x) => {
+			if (cell) {
+				top = Math.max(top, y);
+				bottom = Math.min(bottom, y);
+				left = Math.min(left, x);
+				right = Math.max(right, x);
+			}
+		});
+	});
 
-function collumIsEmpty(map, i) {
-	let j = 0;
-	while (j < map.length) {
-		if (map[j][i] !== null && map[j][i] !== '') break;
-		j++;
-	}
-	if (j < map.length) return false;
-	return true;
-}
-
-function countColumn(map) {
-	let count = 0;
-
-	for (let i = 0; i < map[0].length; i++) {
-		if (!collumIsEmpty(map, i)) count++;
-	}
-	return count;
+	return shape.slice(bottom, top + 1).map((row) => row.slice(left, right + 1));
 }
 
 export default function NextShapes() {
 	const shapes = useSelector(selectNextShape);
 	return (
 		<div className='nextShapes-box'>
-			{shapes.map((piece, index) => {
-				var rowCount = countRow(piece);
-				var colCount = countColumn(piece);
+			{shapes.map((shape, index) => {
+				const fitedShape = fitShape(shape);
 
-				return (
-					<div
-						key={index}
-						className='nextShapes-grid'
-						style={{
-							'--row-count': rowCount,
-							'--col-count': colCount,
-						}}
-					>
-						{piece.map((row, rowIndex) =>
-							row.map((cell, colIndex) => {
-								if (
-									piece[rowIndex].some(
-										(cell) => cell !== null && cell !== ''
-									) &&
-									!collumIsEmpty(piece, colIndex)
-								) {
+				if (fitedShape.length) {
+					return (
+						<div
+							key={index}
+							className='nextShapes-grid'
+							style={{
+								'--row-count': fitedShape.length,
+								'--col-count': fitedShape[0].length,
+							}}
+						>
+							{fitedShape.map((row, rowIndex) =>
+								row.map((cell, colIndex) => {
 									return (
 										<div
 											key={`${rowIndex}-${colIndex}`}
-											className={
-												cell ? 'nextShapes-cell' : 'nextShapes-empty-cell'
-											}
+											className={cell ? 'nextShapes-cell' : null}
 											style={{ '--cell-color': cell }}
 										></div>
 									);
-								}
-							})
-						)}
-					</div>
-				);
+								})
+							)}
+						</div>
+					);
+				}
 			})}
 		</div>
 	);

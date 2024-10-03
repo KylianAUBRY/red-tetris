@@ -1,25 +1,49 @@
-.game-grid {
-	display: grid;
-	grid-template-rows: 1fr;
-	grid-template-columns: 0.5fr 1fr;
-	gap: 0.5vmin;
-	width: 100vw;
-	height: 100vh;
+.Game {
+	--panel-radius: 1vmin;
+	--panel-gap: 2vmin;
+	--font-size: calc(2vmin + 1em);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
 	background-color: var(--back-color);
 }
 
 .game-box {
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	max-height: 100vh;
+	align-items: center;
+	width: 100%;
+	height: 100%;
 }
 
-.game-board-box {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 0.5vmin;
-	max-height: 100vh;
+.player-box {
+	position: relative;
+	width: fit-content;
+	height: fit-content;
+}
+
+.panel-box {
+	aspect-ratio: 0.7071;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	height: 100%;
+	padding-left: 100%;
+}
+
+.panel-grid {
+	pointer-events: initial;
+	display: grid;
+	row-gap: var(--panel-gap);
+	grid-template-rows: 5fr 3.5fr 1.5fr;
+	grid-template-columns: 100%;
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding-left: var(--panel-gap);
 }

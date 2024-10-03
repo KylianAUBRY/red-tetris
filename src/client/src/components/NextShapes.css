@@ -1,16 +1,22 @@
 .nextShapes-box {
+	justify-self: start;
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	justify-content: flex-start;
 	gap: 4vmin;
-	margin: 6vmin;
+	align-self: start;
+	width: 100%;
+	height: 100%;
+	background-color: var(--board-color);
+	border-radius: var(--panel-radius);
 }
 
 .nextShapes-grid {
 	display: grid;
 	grid-template-rows: repeat(var(--row-count), 2.5vmin);
 	grid-template-columns: repeat(var(--col-count), 2.5vmin);
+	margin: 1vmin;
 }
 
 .nextShapes-cell {
@@ -24,10 +30,4 @@
 		inset 0.2vmin 0 0 0 rgba(255, 255, 255, 0.2),
 		inset -0.2vmin 0 0 0 rgba(0, 0, 0, 0.2),
 		0 0.6vmin 0.2vmin rgba(0, 0, 0, 0.3);
-}
-
-.nextShapes-empty-cell {
-	width: 100%;
-	height: 100%;
-	background-color: var(--back-color);
 }

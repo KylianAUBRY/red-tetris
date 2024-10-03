@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { START_STATS } from '../../../constants';
 
 export const playerSlice = createSlice({
 	name: 'player',
@@ -7,7 +8,8 @@ export const playerSlice = createSlice({
 		room: null,
 		lost: true,
 		connected: false,
-		host: false,
+		owner: false,
+		stats: START_STATS,
 	},
 	reducers: {
 		setPlayerName(state, action) {
@@ -16,8 +18,11 @@ export const playerSlice = createSlice({
 		setPlayerRoom(state, action) {
 			state.room = action.payload;
 		},
-		setPlayerHost(state, action) {
-			state.host = action.payload;
+		setPlayerOwner(state, action) {
+			state.owner = action.payload;
+		},
+		updateStats(state, action) {
+			state.stats = action.payload;
 		},
 		playerStart: (state) => {
 			state.lost = false;
@@ -31,7 +36,7 @@ export const playerSlice = createSlice({
 		playerDisconnection: (state) => {
 			state.connected = false;
 			state.lost = true;
-			state.host = false;
+			state.owner = false;
 		},
 	},
 });
@@ -39,7 +44,8 @@ export const playerSlice = createSlice({
 export const {
 	setPlayerName,
 	setPlayerRoom,
-	setPlayerHost,
+	setPlayerOwner,
+	updateStats,
 	playerStart,
 	playerLost,
 	playerConnection,
@@ -47,5 +53,6 @@ export const {
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;
+export const selectPlayerStats = (state) => state.player.stats;
 
 export default playerSlice.reducer;

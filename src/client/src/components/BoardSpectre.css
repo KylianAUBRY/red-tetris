@@ -3,7 +3,7 @@
 	grid-template-rows: repeat(var(--height), 1.5vmin);
 	grid-template-columns: repeat(var(--width), 1.5vmin);
 	margin: 0.3vmin;
-	background-color: black;
+	background-color: var(--panel-color);
 }
 
 .board-spectre-cell {

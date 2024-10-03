@@ -6,15 +6,13 @@ import Opponents from '../components/Opponents';
 import NextShapes from '../components/NextShapes';
 import StartButton from '../components/StartButton';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { setPlayerName, setPlayerRoom, selectPlayer } from '../reducers/player';
-import { selectGame } from '../reducers/game';
+import { setPlayerName, setPlayerRoom } from '../reducers/player';
+import Stats from '../components/Stats';
 
 function Game() {
 	const dispatch = useDispatch();
-	const player = useSelector(selectPlayer);
-	const game = useSelector(selectGame);
 	const { room, player_name } = useParams();
 
 	useEffect(() => {
@@ -23,18 +21,23 @@ function Game() {
 	}, [room, player_name, dispatch]);
 
 	return (
-		<GameSocketProvider room={room} player_name={player_name}>
-			<div className='game-grid'>
+		<div className='Game'>
+			<GameSocketProvider room={room} player_name={player_name}>
 				<Opponents />
 				<div className='game-box'>
-					<div className='game-board-box'>
+					<div className='player-box'>
 						<Board />
-						<NextShapes />
-						{player.host && !game.started && <StartButton />}
+						<div className='panel-box'>
+							<div className='panel-grid'>
+								<NextShapes />
+								<Stats />
+								<StartButton />
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</GameSocketProvider>
+			</GameSocketProvider>
+		</div>
 	);
 }
 

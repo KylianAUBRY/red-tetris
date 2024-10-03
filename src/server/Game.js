@@ -58,11 +58,16 @@ class Game {
 				socket.on('start', this.startRequest.bind(this, socket));
 				this.players.forEach((player) => {
 					if (player.name !== player_name) {
-						socket.emit('addOpponent', player.toOpponent());
+						socket.emit(
+							'addOpponent',
+							player.name,
+							player.stats,
+							player.board.toColHeights()
+						);
 					}
 				});
 				if (this.players.size === 1) {
-					player.toHost(true);
+					player.toOwner(true);
 				}
 				console.log('Player', player_name, 'connected to room', this.room);
 			}
@@ -79,7 +84,7 @@ class Game {
 				console.log('Room', this.room, 'is empty');
 				this.serverSend('empty', this.room);
 			} else {
-				this.players.values().next().value.toHost(false);
+				this.players.values().next().value.toOwner(false);
 			}
 		}
 	}
@@ -111,15 +116,11 @@ class Game {
 		this.started = false;
 	}
 
-	reset() {
+	delete() {
 		this.topic.removeAllListeners();
 		this.players.forEach((player) => player.delete());
 		this.players.clear();
 		this.started = false;
-	}
-
-	delete() {
-		this.reset();
 		this.clearServerTopic();
 	}
 }
