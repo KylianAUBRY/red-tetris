@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { WIDTH, START_STATS } from '../../../constants';
 
 export const playerSlice = createSlice({
 	name: 'game',
@@ -9,6 +10,10 @@ export const playerSlice = createSlice({
 	reducers: {
 		startGame: (state) => {
 			state.started = true;
+			for (let opponent of state.opponents) {
+				opponent.colHeights = new Array(WIDTH).fill(0);
+				opponent.stats = { ...START_STATS };
+			}
 		},
 		endGame: (state) => {
 			state.started = false;
