@@ -7,11 +7,10 @@ import { selectGame } from '../reducers/game';
 
 export default function Opponents() {
 	const game = useSelector(selectGame);
-
 	return (
 		<div className='opponents-box'>
 			{Array.from(game.opponents.values()).map((opponent, index) => (
-				<BoardSpectre key={index} colHeights={opponent.colHeights} />
+				<BoardSpectre key={index} colHeights={opponent.colHeights} name={opponent.name} score={opponent.stats.score}/>
 			))}
 		</div>
 	);

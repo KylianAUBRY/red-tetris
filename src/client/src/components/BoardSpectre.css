@@ -18,3 +18,8 @@
 		inset -0.1vmin 0 0 0 rgba(0, 0, 0, 0.2),
 		0 0.4vmin 0.1vmin rgba(0, 0, 0, 0.3);
 }
+
+.opponent-text {
+	text-align: center;
+	background-color: black;
+}
