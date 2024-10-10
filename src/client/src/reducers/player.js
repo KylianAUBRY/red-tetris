@@ -53,6 +53,8 @@ export const {
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;
+export const selectPlayerLost = (state) => state.player.lost;
+export const selectPlayerOwner = (state) => state.player.owner;
 export const selectPlayerStats = (state) => state.player.stats;
 
 export default playerSlice.reducer;

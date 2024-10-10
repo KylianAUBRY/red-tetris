@@ -73,6 +73,7 @@ class Player {
 		this.gameSub('start', this.startGame);
 		this.gameSub('connect', (player_name, stats, colHeights) => {
 			if (player_name !== this.name) {
+				console.log('addOpponent', player_name, 'to', this.name);
 				this.emit('addOpponent', player_name, stats, colHeights);
 			}
 		});
@@ -89,7 +90,7 @@ class Player {
 				this.emit('updateStats', stats);
 			}
 		});
-		this.gameSub('disconnect', (player_name) => {
+		this.gameSub('quit', (player_name) => {
 			if (player_name !== this.name) {
 				this.emit('removeOpponent', player_name);
 			}
@@ -113,8 +114,8 @@ class Player {
 			socket.emit('error', 'Already connected');
 			return false;
 		}
-		this.connected = true;
 		this.socket = socket;
+		this.connected = true;
 		this.gameSend('connect', this.stats, this.board.toColHeights());
 		this.on('disconnect', this.disconnection);
 		if (!this.lost) {
@@ -250,6 +251,7 @@ class Player {
 			this.piece = newPiece;
 			if (isPlayer && direction === 'down') {
 				this.stats.score += 1;
+				this.updateGravity();
 				this.gameSend('updateStats', this.stats);
 			}
 			this.emit('move', direction);
@@ -308,7 +310,7 @@ class Player {
 		this.gameSend('lost');
 	}
 
-	delete() {
+	quit() {
 		this.clearEvents();
 		clearInterval(this.gravity);
 		this.lost = true;
@@ -318,6 +320,7 @@ class Player {
 		this.owner = false;
 		this.clearGameTopic();
 		this.disconnection();
+		this.gameSend('quit');
 	}
 }
 

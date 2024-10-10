@@ -8,9 +8,8 @@
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
-	background-color: var(--front-back-color);
+	background-color: var(--dark-front-color);
 	border-radius: var(--panel-radius);
-	font-size: var(--font-size);
 	line-height: 3.5vmin;
 }
 

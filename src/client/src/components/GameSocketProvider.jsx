@@ -23,7 +23,7 @@ import {
 	playerLost,
 	playerConnection,
 	playerDisconnection,
-	selectPlayer,
+	selectPlayerLost,
 } from '../reducers/player';
 import {
 	startGame,
@@ -44,7 +44,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 	const URL = PROD ? undefined : `http://localhost:${PORT}`;
 	const sessionid = sessionStorage.getItem('sessionid');
 	const pieceRef = useBoxRef(useSelector(selectPiece));
-	const playerRef = useBoxRef(useSelector(selectPlayer));
+	const playerLostRef = useBoxRef(useSelector(selectPlayerLost));
 	const socketRef = useRef(null);
 
 	useEffect(() => {
@@ -85,7 +85,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 		});
 
 		socket.on('newTurn', (newPiece, nextShapes) => {
-			if (!playerRef.current.lost) {
+			if (!playerLostRef.current) {
 				dispatch(fixPiece(pieceRef.current));
 				dispatch(clearLine());
 				dispatch(setNextShapes(nextShapes));
@@ -99,7 +99,6 @@ export default function GameSocketProvider({ room, player_name, children }) {
 
 		socket.on('updateStats', (stats) => {
 			dispatch(updateStats(stats));
-			console.log('Stats:', stats);
 		});
 
 		socket.on('lost', () => {
@@ -165,7 +164,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			socket.disconnect();
 			socket.removeAllListeners();
 		};
-	}, [dispatch, URL, room, player_name, sessionid, pieceRef, playerRef]);
+	}, [dispatch, URL, room, player_name, sessionid, pieceRef, playerLostRef]);
 
 	return (
 		<SocketContext.Provider value={socketRef}>

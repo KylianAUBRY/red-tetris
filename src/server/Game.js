@@ -78,7 +78,7 @@ class Game {
 		const player = this.players.get(player_name);
 		if (player) {
 			console.log('Player', player_name, 'disconnected from room', this.room);
-			player.delete();
+			player.quit();
 			this.players.delete(player_name);
 			if (this.players.size === 0) {
 				console.log('Room', this.room, 'is empty');
@@ -118,7 +118,7 @@ class Game {
 
 	delete() {
 		this.topic.removeAllListeners();
-		this.players.forEach((player) => player.delete());
+		this.players.forEach((player) => player.quit());
 		this.players.clear();
 		this.started = false;
 		this.clearServerTopic();

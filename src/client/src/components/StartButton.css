@@ -1,17 +1,59 @@
+/*
 .start-button {
+    justify-self: start;
+    display: inline-block;
+    align-self: end;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background-color: var(--front-color);
+    border: none;
+    border-radius: var(--panel-radius);
+    font-size: var(--font-size);
+    font-family: inherit;
+    font-weight: bold;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+}
+	*/
+
+.start-button {
+	outline: 0;
+	will-change: box-shadow, transform;
+	box-shadow: inset 0 -0.5vmin 0 var(--dark-front-color);
 	justify-self: start;
 	display: inline-block;
 	align-self: end;
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
+	padding: 0;
+	transition:
+		box-shadow 0.15s ease,
+		transform 0.15s ease;
 	background-color: var(--front-color);
-	border: none;
+	cursor: pointer;
+	border: 0;
 	border-radius: var(--panel-radius);
-	font-size: var(--font-size);
+	font-size: inherit;
 	font-family: inherit;
 	font-weight: bold;
 	color: inherit;
 	text-align: center;
 	text-decoration: none;
+}
+
+.start-button:hover {
+	transform: translateY(-0.1vmin);
+}
+
+.start-button:active {
+	box-shadow: inset 0 0.5vmin 1vmin var(--dark-front-color);
+	transform: translateY(0.1vmin);
+}
+
+.start-button:disabled {
+	pointer-events: none;
+	box-shadow: inset 0 0.5vmin 1vmin var(--dark-front-color);
 }

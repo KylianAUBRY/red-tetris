@@ -19,7 +19,15 @@ export const playerSlice = createSlice({
 			state.started = false;
 		},
 		addOpponent: (state, action) => {
-			state.opponents.push(action.payload);
+			const opponent = state.opponents.find(
+				(opponent) => opponent.name === action.payload.name
+			);
+			if (opponent) {
+				opponent.stats = action.payload.stats;
+				opponent.colHeights = action.payload.colHeights;
+			} else {
+				state.opponents.push(action.payload);
+			}
 		},
 		removeOpponent: (state, action) => {
 			state.opponents = state.opponents.filter(
@@ -60,5 +68,7 @@ export const {
 } = playerSlice.actions;
 
 export const selectGame = (state) => state.game;
+export const selectGameStarted = (state) => state.game.started;
+export const selectOpponents = (state) => state.game.opponents;
 
 export default playerSlice.reducer;

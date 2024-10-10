@@ -4,7 +4,7 @@ import { HEIGHT, SPECTRE_COLOR } from '../../../constants.js';
 
 export default function BoardSpectre({ colHeights, name, score }) {
 	return (
-		<div>
+		<div className='board-spectre'>
 			<div className='board-spectre-grid'>
 				{Array.from({ length: HEIGHT }, (_, rowIndex) =>
 					colHeights.map((colHeight, colIndex) => {
@@ -20,8 +20,9 @@ export default function BoardSpectre({ colHeights, name, score }) {
 					})
 				)}
 			</div>
-			<div className='opponent-text'>{name} : {score}</div>
+			<div className='opponent-text'>
+				{name} : {score}
+			</div>
 		</div>
 	);
 }
-
