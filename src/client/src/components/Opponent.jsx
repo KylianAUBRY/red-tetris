@@ -10,6 +10,7 @@ import {
 	SPECT_COLOR,
 	LOST_COLOR,
 } from '../../../constants';
+import LostBanner from './LostBanner';
 
 export default function Opponent({ opponent }) {
 	const gameStarted = useSelector(selectGameStarted);

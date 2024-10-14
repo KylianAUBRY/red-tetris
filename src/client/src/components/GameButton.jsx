@@ -21,7 +21,7 @@ export default function GameButton() {
 
 	function getContent() {
 		if (!playerConnected) {
-			return "Can't connect to server";
+			return "Can't connect";
 		}
 		if (gameStarted) {
 			return 'Game in progress';

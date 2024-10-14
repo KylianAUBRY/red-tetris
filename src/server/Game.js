@@ -54,7 +54,9 @@ class Game {
 			if (player.connection(socket)) {
 				socket.on('start', this.startRequest.bind(this, socket));
 				for (const player of this.players.values()) {
-					socket.emit('addOpponent', player.toOpponent());
+					if (player.name !== player_name) {
+						socket.emit('addOpponent', player.toOpponent());
+					}
 				}
 				if (this.players.size === 0) {
 					player.setOwner(true, true);
