@@ -32,6 +32,7 @@ import {
 	updateOpponent,
 	removeOpponent,
 	gameDisconnection,
+	spectGame,
 } from '../reducers/game';
 import useBoxRef from '../hooks/useBoxRef';
 import { PROD, PORT } from '../../../constants';
@@ -69,6 +70,10 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			dispatch(setPiece(startPiece));
 			dispatch(setPlayerLost(false));
 			dispatch(startGame());
+		});
+
+		socket.on('spect', () => {
+			dispatch(spectGame());
 		});
 
 		socket.on('move', (direction) => {

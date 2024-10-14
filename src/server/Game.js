@@ -52,7 +52,8 @@ class Game {
 			let player =
 				this.players.get(player_name) || new Player(player_name, this.topic);
 			if (player.connection(socket)) {
-				socket.on('start', this.startRequest.bind(this, socket));
+				socket.on('start', this.startRequest.bind(this, player));
+				socket.on('ready', this.readyRequest.bind(this, player));
 				for (const player of this.players.values()) {
 					if (player.name !== player_name) {
 						socket.emit('addOpponent', player.toOpponent());
@@ -60,6 +61,13 @@ class Game {
 				}
 				if (this.players.size === 0) {
 					player.setOwner(true, true);
+				}
+				if (this.started) {
+					if (player.ready) {
+						player.startGameEvents();
+					} else {
+						player.emit('spect');
+					}
 				}
 				this.players.set(player_name, player);
 				console.log('Player', player_name, 'connected to room', this.room);
@@ -82,14 +90,22 @@ class Game {
 		}
 	}
 
-	startRequest(socket) {
+	startRequest(player) {
 		if (
 			!this.started &&
-			this.players.values().next().value.socket.id === socket.id
+			this.players.values().next().value.name === player.name
 		) {
 			this.start();
 		} else {
-			socket.emit('error', 'Player not allowed to start game');
+			player.emit('error', 'Player not allowed to start game');
+		}
+	}
+
+	readyRequest(player) {
+		if (!this.started) {
+			player.setReady(true);
+		} else {
+			player.emit('error', 'Game already started');
 		}
 	}
 

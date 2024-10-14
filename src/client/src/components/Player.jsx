@@ -7,13 +7,15 @@ import GameButton from './GameButton';
 import LostBanner from './LostBanner';
 
 import { useSelector } from 'react-redux';
-import { selectPlayerLost } from '../reducers/player';
+import { selectPlayerReady, selectPlayerLost } from '../reducers/player';
 import { selectGameStarted, selectPlayerLast } from '../reducers/game';
 
 export default function Player() {
 	const gameStarted = useSelector(selectGameStarted);
 	const playerLost = useSelector(selectPlayerLost);
 	const playerLast = useSelector(selectPlayerLast);
+	const playerReady = useSelector(selectPlayerReady);
+	const playerInGame = gameStarted && playerReady;
 
 	return (
 		<div className='player-box'>
@@ -25,7 +27,7 @@ export default function Player() {
 					<GameButton />
 				</div>
 			</div>
-			{gameStarted && playerLost && !playerLast && <LostBanner />}
+			{playerInGame && playerLost && !playerLast && <LostBanner />}
 		</div>
 	);
 }

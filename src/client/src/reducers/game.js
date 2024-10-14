@@ -19,6 +19,12 @@ export const playerSlice = createSlice({
 				Object.assign(opponent, START_OPPONENT);
 			}
 		},
+		spectGame: (state) => {
+			state.started = true;
+			for (let opponent of state.opponents) {
+				Object.assign(opponent, START_OPPONENT);
+			}
+		},
 		endGame: (state) => {
 			state.started = false;
 		},
@@ -54,6 +60,7 @@ export const playerSlice = createSlice({
 
 export const {
 	startGame,
+	spectGame,
 	endGame,
 	setRoom,
 	addOpponent,
@@ -66,7 +73,9 @@ export const selectGame = (state) => state.game;
 export const selectGameStarted = (state) => state.game.started;
 export const selectOpponents = (state) => state.game.opponents;
 export const selectPlayerLast = (state) => {
-	return state.game.opponents.every((opponent) => opponent.lost);
+	return state.game.opponents.every(
+		(opponent) => opponent.lost || !opponent.ready
+	);
 };
 
 export default playerSlice.reducer;

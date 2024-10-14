@@ -168,16 +168,7 @@ class Player {
 		this.socket = socket;
 		this.connected = true;
 		this.gameSend('connect', this.toOpponent());
-		if (this.ready) {
-			this.emit('ready', true);
-		}
-		this.on('ready', () => {
-			this.setReady(true);
-		});
 		this.on('disconnect', this.disconnection);
-		if (this.ready && !this.lost) {
-			this.startGameEvents();
-		}
 		return true;
 	}
 
@@ -205,6 +196,8 @@ class Player {
 			this.gravity = setInterval(() => {
 				this.movePiece('down', false);
 			}, this.delay);
+		} else {
+			this.emit('spect');
 		}
 	}
 

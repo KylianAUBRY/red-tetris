@@ -16,23 +16,21 @@ export default function GameButton() {
 	const playerConnected = useSelector(selectPlayerConnected);
 	const playerOwner = useSelector(selectPlayerOwner);
 	const gameStarted = useSelector(selectGameStarted);
-	const buttonIsActive =
-		playerConnected && (!playerReady || (playerOwner && !gameStarted));
 
-	function getContent() {
+	function getState() {
 		if (!playerConnected) {
-			return "Can't connect";
+			return { content: "Can't connect", disabled: true };
 		}
 		if (gameStarted) {
-			return 'Game in progress';
+			return { content: 'Game in progress', disabled: true };
 		}
 		if (!playerReady) {
-			return 'Ready';
+			return { content: 'Ready', disabled: false };
 		}
 		if (!playerOwner) {
-			return 'Waiting owner';
+			return { content: 'Waiting owner', disabled: true };
 		}
-		return 'Start Game';
+		return { content: 'Start Game', disabled: false };
 	}
 
 	function readyRequest(event) {
@@ -45,13 +43,15 @@ export default function GameButton() {
 		socketRef.current.emit('start');
 	}
 
+	const state = getState();
+
 	return (
 		<button
-			disabled={!buttonIsActive}
+			disabled={state.disabled}
 			className='game-button'
 			onClick={playerReady ? startRequest : readyRequest}
 		>
-			{getContent()}
+			{state.content}
 		</button>
 	);
 }
