@@ -14,8 +14,8 @@ class Game {
 	}
 
 	initTopic() {
-		this.topic.on('lost', (player_name) => {
-			if (this.players.values().every((player) => player.lost)) {
+		this.topic.on('lost', (player_name, lost) => {
+			if (lost && this.players.values().every((player) => player.lost)) {
 				this.end(player_name);
 			}
 		});
@@ -49,26 +49,17 @@ class Game {
 		if (!player_name) {
 			socket.emit('error', 'Player name not provided');
 		} else {
-			let player = this.players.get(player_name);
-			if (!player) {
-				player = new Player(player_name, this.topic);
-				this.players.set(player_name, player);
-			}
+			let player =
+				this.players.get(player_name) || new Player(player_name, this.topic);
 			if (player.connection(socket)) {
 				socket.on('start', this.startRequest.bind(this, socket));
-				this.players.forEach((player) => {
-					if (player.name !== player_name) {
-						socket.emit(
-							'addOpponent',
-							player.name,
-							player.stats,
-							player.board.toColHeights()
-						);
-					}
-				});
-				if (this.players.size === 1) {
-					player.toOwner(true);
+				for (const player of this.players.values()) {
+					socket.emit('addOpponent', player.toOpponent());
 				}
+				if (this.players.size === 0) {
+					player.setOwner(true, true);
+				}
+				this.players.set(player_name, player);
 				console.log('Player', player_name, 'connected to room', this.room);
 			}
 		}
@@ -84,7 +75,7 @@ class Game {
 				console.log('Room', this.room, 'is empty');
 				this.serverSend('empty', this.room);
 			} else {
-				this.players.values().next().value.toOwner(false);
+				this.players.values().next().value.setOwner(true, false);
 			}
 		}
 	}

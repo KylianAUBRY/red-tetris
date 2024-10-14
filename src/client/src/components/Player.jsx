@@ -3,16 +3,17 @@ import './Player.css';
 import Board from './Board';
 import NextShapes from './NextShapes';
 import Stats from './Stats';
-import StartButton from './StartButton';
+import GameButton from './GameButton';
 import LostBanner from './LostBanner';
 
 import { useSelector } from 'react-redux';
 import { selectPlayerLost } from '../reducers/player';
-import { selectGameStarted } from '../reducers/game';
+import { selectGameStarted, selectPlayerLast } from '../reducers/game';
 
 export default function Player() {
-	const playerLost = useSelector(selectPlayerLost);
 	const gameStarted = useSelector(selectGameStarted);
+	const playerLost = useSelector(selectPlayerLost);
+	const playerLast = useSelector(selectPlayerLast);
 
 	return (
 		<div className='player-box'>
@@ -21,10 +22,10 @@ export default function Player() {
 				<div className='panel-grid'>
 					<NextShapes />
 					<Stats />
-					<StartButton />
+					<GameButton />
 				</div>
 			</div>
-			{gameStarted && playerLost && <LostBanner />}
+			{gameStarted && playerLost && !playerLast && <LostBanner />}
 		</div>
 	);
 }

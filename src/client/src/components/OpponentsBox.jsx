@@ -1,6 +1,6 @@
 import React from 'react';
-import './Opponents.css';
-import BoardSpectre from './BoardSpectre';
+import './OpponentsBox.css';
+import Opponent from './Opponent';
 
 import { useSelector } from 'react-redux';
 import { selectOpponents } from '../reducers/game';
@@ -10,12 +10,7 @@ export default function Opponents() {
 	return (
 		<div className='opponents-box'>
 			{Array.from(opponents.values()).map((opponent, index) => (
-				<BoardSpectre
-					key={index}
-					colHeights={opponent.colHeights}
-					name={opponent.name}
-					score={opponent.stats.score}
-				/>
+				<Opponent key={index} opponent={opponent} />
 			))}
 		</div>
 	);

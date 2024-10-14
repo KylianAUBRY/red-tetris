@@ -18,9 +18,9 @@ import {
 import { setNextShapes } from '../reducers/nextShapes';
 import {
 	setPlayerOwner,
-	updateStats,
-	playerStart,
-	playerLost,
+	setPlayerReady,
+	setPlayerLost,
+	updatePlayerStats,
 	playerConnection,
 	playerDisconnection,
 	selectPlayerLost,
@@ -29,9 +29,8 @@ import {
 	startGame,
 	endGame,
 	addOpponent,
+	updateOpponent,
 	removeOpponent,
-	updateOpponentBoard,
-	updateOpponentStats,
 	gameDisconnection,
 } from '../reducers/game';
 import useBoxRef from '../hooks/useBoxRef';
@@ -68,7 +67,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			dispatch(setBoard(startBoard));
 			dispatch(setNextShapes(nextShapes));
 			dispatch(setPiece(startPiece));
-			dispatch(playerStart());
+			dispatch(setPlayerLost(false));
 			dispatch(startGame());
 		});
 
@@ -93,17 +92,20 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			}
 		});
 
-		socket.on('owner', (isNewRoom) => {
-			dispatch(setPlayerOwner(true));
+		socket.on('owner', (value, isNewRoom) => {
+			dispatch(setPlayerOwner(value));
 		});
 
-		socket.on('updateStats', (stats) => {
-			dispatch(updateStats(stats));
+		socket.on('ready', (value) => {
+			dispatch(setPlayerReady(value));
 		});
 
-		socket.on('lost', () => {
-			dispatch(playerLost());
-			console.log('Lost');
+		socket.on('lost', (value) => {
+			dispatch(setPlayerLost(value));
+		});
+
+		socket.on('stats', (stats) => {
+			dispatch(updatePlayerStats(stats));
 		});
 
 		socket.on('penality', (line, count) => {
@@ -113,23 +115,18 @@ export default function GameSocketProvider({ room, player_name, children }) {
 		socket.on('end', (last_player) => {
 			dispatch(endGame());
 			console.log('Game Over');
-			console.log('Last:', last_player);
 		});
 
 		socket.on('error', (reason) => {
 			console.log('Error:', reason);
 		});
 
-		socket.on('addOpponent', (name, stats, colHeights) => {
-			dispatch(addOpponent({ name, stats, colHeights }));
+		socket.on('addOpponent', (opponent) => {
+			dispatch(addOpponent(opponent));
 		});
 
-		socket.on('updateOpponentBoard', (name, colHeights) => {
-			dispatch(updateOpponentBoard({ name, colHeights }));
-		});
-
-		socket.on('updateOpponentStats', (name, stats) => {
-			dispatch(updateOpponentStats({ name, stats }));
+		socket.on('updateOpponent', (opponentUpdate) => {
+			dispatch(updateOpponent(opponentUpdate));
 		});
 
 		socket.on('removeOpponent', (opponent) => {

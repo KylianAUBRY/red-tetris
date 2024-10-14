@@ -21,7 +21,7 @@
 }
 
 .ellipsis-anim::after {
-	content: '';
+	content: '\00A0\00A0\00A0';
 	animation: ellipsis-dot 3s steps(4) infinite;
 }
 

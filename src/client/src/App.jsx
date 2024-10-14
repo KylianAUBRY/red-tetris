@@ -9,9 +9,8 @@ import {
 	NEXT_PIECE_COUNT,
 	FONT_COLOR,
 	BACK_COLOR,
-	FRONT_COLOR,
-	DARK_FRONT_COLOR,
 	BOARD_COLOR,
+	FRONT_COLOR,
 } from '../../constants';
 
 function App() {
@@ -21,9 +20,8 @@ function App() {
 		'--next-piece-count': NEXT_PIECE_COUNT,
 		'--font-color': FONT_COLOR,
 		'--back-color': BACK_COLOR,
-		'--front-color': FRONT_COLOR,
-		'--dark-front-color': DARK_FRONT_COLOR,
 		'--board-color': BOARD_COLOR,
+		'--front-color': FRONT_COLOR,
 	};
 
 	return (

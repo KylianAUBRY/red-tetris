@@ -8,7 +8,11 @@
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
-	background-color: var(--dark-front-color);
+	background-color: color-mix(
+		in srgb,
+		var(--board-color) 50%,
+		var(--front-color) 50%
+	);
 	border-radius: var(--panel-radius);
 	line-height: 3.5vmin;
 }

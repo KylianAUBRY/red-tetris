@@ -1,0 +1,13 @@
+.opponent {
+	justify-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: var(--outline-color);
+	border-radius: 0.3vmin;
+}
+
+.opponent-text {
+	font-size: 60%;
+	text-align: center;
+}

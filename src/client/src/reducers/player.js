@@ -1,60 +1,56 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { START_STATS } from '../../../constants';
+import { DEFAULT_STATS } from '../../../constants';
 
 export const playerSlice = createSlice({
 	name: 'player',
 	initialState: {
 		name: null,
-		room: null,
-		lost: true,
 		connected: false,
 		owner: false,
-		stats: START_STATS,
+		ready: false,
+		lost: true,
+		stats: DEFAULT_STATS,
 	},
 	reducers: {
 		setPlayerName(state, action) {
 			state.name = action.payload;
 		},
-		setPlayerRoom(state, action) {
-			state.room = action.payload;
-		},
 		setPlayerOwner(state, action) {
 			state.owner = action.payload;
 		},
-		updateStats(state, action) {
-			state.stats = action.payload;
+		setPlayerReady: (state, action) => {
+			state.ready = action.payload;
 		},
-		playerStart: (state) => {
-			state.lost = false;
+		setPlayerLost: (state, action) => {
+			state.lost = action.payload;
 		},
-		playerLost: (state) => {
-			state.lost = true;
+		updatePlayerStats(state, action) {
+			Object.assign(state.stats, action.payload);
 		},
 		playerConnection: (state) => {
 			state.connected = true;
 		},
 		playerDisconnection: (state) => {
 			state.connected = false;
-			state.lost = true;
-			state.owner = false;
 		},
 	},
 });
 
 export const {
 	setPlayerName,
-	setPlayerRoom,
 	setPlayerOwner,
-	updateStats,
-	playerStart,
-	playerLost,
+	setPlayerReady,
+	setPlayerLost,
+	updatePlayerStats,
 	playerConnection,
 	playerDisconnection,
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;
-export const selectPlayerLost = (state) => state.player.lost;
 export const selectPlayerOwner = (state) => state.player.owner;
+export const selectPlayerReady = (state) => state.player.ready;
+export const selectPlayerLost = (state) => state.player.lost;
 export const selectPlayerStats = (state) => state.player.stats;
+export const selectPlayerConnected = (state) => state.player.connected;
 
 export default playerSlice.reducer;

@@ -1,7 +1,7 @@
 .App {
 	width: 100vw;
 	height: 100vh;
-	font-size: calc(3vmin + 0.4em);
+	font-size: calc(3vmin + 0.4rem);
 	font-family: 'Tiny5', sans-serif;
 	color: var(--font-color);
 }

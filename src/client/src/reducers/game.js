@@ -1,9 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { WIDTH, START_STATS } from '../../../constants';
+import { START_OPPONENT } from '../../../constants';
+
+function findOpponent(opponents, name) {
+	return opponents.find((opponent) => opponent.name === name);
+}
 
 export const playerSlice = createSlice({
 	name: 'game',
 	initialState: {
+		room: null,
 		started: false,
 		opponents: new Array(),
 	},
@@ -11,20 +16,19 @@ export const playerSlice = createSlice({
 		startGame: (state) => {
 			state.started = true;
 			for (let opponent of state.opponents) {
-				opponent.colHeights = new Array(WIDTH).fill(0);
-				opponent.stats = { ...START_STATS };
+				Object.assign(opponent, START_OPPONENT);
 			}
 		},
 		endGame: (state) => {
 			state.started = false;
 		},
+		setRoom(state, action) {
+			state.room = action.payload;
+		},
 		addOpponent: (state, action) => {
-			const opponent = state.opponents.find(
-				(opponent) => opponent.name === action.payload.name
-			);
+			const opponent = findOpponent(state.opponents, action.payload.name);
 			if (opponent) {
-				opponent.stats = action.payload.stats;
-				opponent.colHeights = action.payload.colHeights;
+				Object.assign(opponent, action.payload);
 			} else {
 				state.opponents.push(action.payload);
 			}
@@ -34,20 +38,11 @@ export const playerSlice = createSlice({
 				(opponent) => opponent.name !== action.payload
 			);
 		},
-		updateOpponentBoard: (state, action) => {
-			const opponent = state.opponents.find(
-				(opponent) => opponent.name === action.payload.name
-			);
+		updateOpponent: (state, action) => {
+			const opponent = findOpponent(state.opponents, action.payload.name);
 			if (opponent) {
-				opponent.colHeights = action.payload.colHeights;
-			}
-		},
-		updateOpponentStats: (state, action) => {
-			const opponent = state.opponents.find(
-				(opponent) => opponent.name === action.payload.name
-			);
-			if (opponent) {
-				opponent.stats = action.payload.stats;
+				Object.assign(opponent.stats, action.payload.stats);
+				Object.assign(opponent, action.payload);
 			}
 		},
 		gameDisconnection: (state) => {
@@ -60,15 +55,18 @@ export const playerSlice = createSlice({
 export const {
 	startGame,
 	endGame,
+	setRoom,
 	addOpponent,
 	removeOpponent,
-	updateOpponentBoard,
-	updateOpponentStats,
+	updateOpponent,
 	gameDisconnection,
 } = playerSlice.actions;
 
 export const selectGame = (state) => state.game;
 export const selectGameStarted = (state) => state.game.started;
 export const selectOpponents = (state) => state.game.opponents;
+export const selectPlayerLast = (state) => {
+	return state.game.opponents.every((opponent) => opponent.lost);
+};
 
 export default playerSlice.reducer;

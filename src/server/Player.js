@@ -12,7 +12,7 @@ import {
 	PIECE_COUNT,
 	LEVEL_UP,
 	SCORE_UNIT,
-	START_STATS,
+	DEFAULT_STATS,
 	PIECE_I,
 	PIECE_O,
 	PIECE_T,
@@ -31,12 +31,13 @@ function factorial(n) {
 
 class Player {
 	constructor(name, gameTopic) {
-		this.connected = false;
-		this.lost = true;
-		this.owner = false;
-		this.socket = null;
 		this.name = name;
-		this.stats = { ...START_STATS };
+		this.socket = null;
+		this.connected = false;
+		this.owner = false;
+		this.ready = false;
+		this.lost = true;
+		this.stats = { ...DEFAULT_STATS };
 		this.delay = MAX_DELAY;
 		this.rand = new Rand();
 		this.board = new Board(WIDTH, HEIGHT);
@@ -69,25 +70,75 @@ class Player {
 		}
 	}
 
+	setOwner(value, isNewRoom = false) {
+		if (this.owner !== value) {
+			this.owner = value;
+			this.emit('owner', value, isNewRoom);
+			this.gameSend('owner', value);
+			if (this.owner) {
+				this.setReady(true);
+			}
+		}
+	}
+
+	setReady(value) {
+		if (this.ready !== value) {
+			this.ready = value;
+			this.emit('ready', value);
+			this.gameSend('ready', value);
+		}
+	}
+
+	setLost(value) {
+		if (this.lost !== value) {
+			this.lost = value;
+			this.emit('lost', value);
+			this.gameSend('lost', value);
+		}
+	}
+
+	updateStats(stats) {
+		Object.assign(this.stats, stats);
+		this.emit('stats', stats);
+		this.gameSend('stats', stats);
+	}
+
 	initGameTopic() {
 		this.gameSub('start', this.startGame);
-		this.gameSub('connect', (player_name, stats, colHeights) => {
+		this.gameSub('connect', (player_name, opponent) => {
 			if (player_name !== this.name) {
-				console.log('addOpponent', player_name, 'to', this.name);
-				this.emit('addOpponent', player_name, stats, colHeights);
+				this.emit('addOpponent', opponent);
+			}
+		});
+		this.gameSub('owner', (player_name, owner) => {
+			if (player_name !== this.name) {
+				this.emit('updateOpponent', { name: player_name, owner });
+			}
+		});
+		this.gameSub('ready', (player_name, ready) => {
+			if (player_name !== this.name) {
+				this.emit('updateOpponent', { name: player_name, ready });
+			}
+		});
+		this.gameSub('lost', (player_name, lost) => {
+			if (player_name !== this.name) {
+				this.emit('updateOpponent', { name: player_name, lost });
+			}
+		});
+		this.gameSub('stats', (player_name, stats) => {
+			if (player_name !== this.name) {
+				this.emit('updateOpponent', { name: player_name, stats });
 			}
 		});
 		this.gameSub('newTurn', (player_name, clearCount, colHeights) => {
 			if (player_name !== this.name) {
-				this.emit('updateOpponentBoard', player_name, colHeights);
+				this.emit('updateOpponent', { name: player_name, colHeights });
 				this.penality(clearCount);
 			}
 		});
-		this.gameSub('updateStats', (player_name, stats) => {
+		this.gameSub('penality', (player_name, colHeights) => {
 			if (player_name !== this.name) {
-				this.emit('updateOpponentStats', player_name, stats);
-			} else {
-				this.emit('updateStats', stats);
+				this.emit('updateOpponent', { name: player_name, colHeights });
 			}
 		});
 		this.gameSub('quit', (player_name) => {
@@ -116,10 +167,16 @@ class Player {
 		}
 		this.socket = socket;
 		this.connected = true;
-		this.gameSend('connect', this.stats, this.board.toColHeights());
+		this.gameSend('connect', this.toOpponent());
+		if (this.ready) {
+			this.emit('ready', true);
+		}
+		this.on('ready', () => {
+			this.setReady(true);
+		});
 		this.on('disconnect', this.disconnection);
-		if (!this.lost) {
-			this.initEvents();
+		if (this.ready && !this.lost) {
+			this.startGameEvents();
 		}
 		return true;
 	}
@@ -133,7 +190,25 @@ class Player {
 		}
 	}
 
-	initEvents() {
+	startGame(seed) {
+		if (this.ready) {
+			this.lost = false;
+			this.stats = { ...DEFAULT_STATS };
+			this.delay = MAX_DELAY;
+
+			this.rand.set(seed);
+			this.board.clearGrid();
+			this.generateNextShapes();
+			this.generateNextShapes();
+			this.newPiece();
+			this.startGameEvents();
+			this.gravity = setInterval(() => {
+				this.movePiece('down', false);
+			}, this.delay);
+		}
+	}
+
+	startGameEvents() {
 		this.on('move', this.movePiece);
 		this.on('rotate', this.rotatePiece);
 		this.on('drop', this.dropPiece);
@@ -145,38 +220,17 @@ class Player {
 		);
 	}
 
-	clearEvents() {
+	clearGameEvents() {
 		this.socket.removeAllListeners('move');
 		this.socket.removeAllListeners('rotate');
 		this.socket.removeAllListeners('drop');
 	}
 
-	toOwner(isNewRoom) {
-		if (!this.owner) {
-			this.owner = true;
-			this.emit('owner', isNewRoom);
-			console.log('Player', this.name, 'is the owner');
-		}
-	}
-
-	startGame(seed) {
-		this.stats = { ...START_STATS };
-		this.lost = false;
-		this.delay = MAX_DELAY;
-
-		this.rand.set(seed);
-		this.board.clearGrid();
-		this.generateNextShapes();
-		this.generateNextShapes();
-		this.newPiece();
-		this.initEvents();
-		this.gravity = setInterval(() => {
-			this.movePiece('down', false);
-		}, this.delay);
-	}
-
 	endGame(last_player) {
 		this.emit('end', last_player);
+		if (!this.owner) {
+			this.setReady(false);
+		}
 	}
 
 	generateNextShapes() {
@@ -218,15 +272,17 @@ class Player {
 		this.board.fixPiece(this.piece);
 		const clearCount = this.board.clearLine();
 		if (clearCount) {
-			this.stats.score +=
-				SCORE_UNIT * factorial(clearCount) * (this.stats.level + 1);
-			this.stats.lines += clearCount;
-			this.stats.level = Math.floor(this.stats.lines / LEVEL_UP);
+			this.updateStats({
+				score:
+					this.stats.score +
+					SCORE_UNIT * factorial(clearCount) * (this.stats.level + 1),
+				lines: this.stats.lines + clearCount,
+				level: Math.floor(this.stats.lines / LEVEL_UP),
+			});
 			this.delay = Math.max(
 				MIN_DELAY,
 				MAX_DELAY - this.stats.level * ACCELERATION
 			);
-			this.gameSend('updateStats', this.stats);
 		}
 		this.newPiece();
 		if (this.board.pieceTotallyOutOfBounds(this.piece)) {
@@ -234,12 +290,12 @@ class Player {
 			return false;
 		}
 		this.updateGravity();
-		this.gameSend('newTurn', clearCount, this.board.toColHeights());
 		this.emit(
 			'newTurn',
 			this.piece,
 			this.nextShapes.slice(0, NEXT_PIECE_COUNT)
 		);
+		this.gameSend('newTurn', clearCount, this.board.toColHeights());
 		return true;
 	}
 
@@ -250,7 +306,7 @@ class Player {
 		if (!this.board.pieceCollides(newPiece)) {
 			this.piece = newPiece;
 			if (isPlayer && direction === 'down') {
-				this.stats.score += 1;
+				this.updateStats({ score: this.stats.score + 1 });
 				this.updateGravity();
 				this.gameSend('updateStats', this.stats);
 			}
@@ -282,7 +338,7 @@ class Player {
 		}
 		this.piece.y -= 1;
 		if (distance) {
-			this.stats.score += distance * 2;
+			this.updateStats({ score: this.stats.score + distance * 2 });
 			this.gameSend('updateStats', this.stats);
 		}
 		this.emit('drop', this.piece.y);
@@ -298,28 +354,39 @@ class Player {
 
 			this.board.addPenalityLines(line, count);
 			this.emit('penality', line, count);
+			this.gameSend('penality', this.board.toColHeights());
 		}
 	}
 
+	toOpponent() {
+		return {
+			name: this.name,
+			ready: this.ready,
+			lost: this.lost,
+			owner: this.owner,
+			stats: this.stats,
+			colHeights: this.board.toColHeights(),
+		};
+	}
+
 	lose() {
-		this.clearEvents();
+		this.clearGameEvents();
 		clearInterval(this.gravity);
-		this.lost = true;
 		this.nextShapes = [];
-		this.emit('lost');
-		this.gameSend('lost');
+		this.setLost(true);
 	}
 
 	quit() {
-		this.clearEvents();
+		this.clearGameEvents();
 		clearInterval(this.gravity);
-		this.lost = true;
 		this.board.clearGrid();
 		this.piece = null;
 		this.nextShapes = [];
-		this.owner = false;
 		this.clearGameTopic();
 		this.disconnection();
+		this.setOwner(false);
+		this.setReady(false);
+		this.setLost(true);
 		this.gameSend('quit');
 	}
 }

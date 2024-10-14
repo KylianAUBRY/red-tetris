@@ -11,18 +11,26 @@ export const PIECE_COUNT = 7;
 export const LEVEL_UP = 10;
 export const SCORE_UNIT = 50;
 
-export const FONT_COLOR = 'white';
+export const FONT_COLOR = '#ffffff';
 export const BACK_COLOR = '#282c34';
 export const FRONT_COLOR = '#048b9a';
-export const DARK_FRONT_COLOR = '#053b41';
 export const BOARD_COLOR = '#000000';
-export const PENALITY_COLOR = 'gray';
-export const SPECTRE_COLOR = 'gray';
+export const PENALITY_COLOR = '#424242';
+export const SPECTRE_COLOR = '#424242';
+export const OWNER_COLOR = '#DAA520';
+export const SPECT_COLOR = '#A9A9A9';
+export const LOST_COLOR = '#B22222';
 
-export const START_STATS = {
+export const DEFAULT_STATS = {
 	score: 0,
 	level: 0,
 	lines: 0,
+};
+
+export const START_OPPONENT = {
+	lost: false,
+	stats: DEFAULT_STATS,
+	colHeights: Array(WIDTH).fill(0),
 };
 
 export const PIECE_I = [
