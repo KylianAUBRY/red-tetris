@@ -25,12 +25,11 @@ describe('Board Component', () => {
 				<Board />
 			</Provider>
 		);
-	  });
+	});
 	
 
 	it('renders without crashing', () => {
 		let state = initialState;
-
 		state.board.grid[0][1] = 'yellow'
 		state.board.grid[0][2] = 'orange'
 		state.board.grid[0][3] = 'green'

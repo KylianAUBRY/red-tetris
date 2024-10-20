@@ -59,7 +59,7 @@ export function getOpponent() {
 }
 
 export function getPiece() {
-	let piece =  {
+	let piece = {
 		shape: [
 			[null, 'cyan', null],
 			['cyan', 'cyan', 'cyan'],

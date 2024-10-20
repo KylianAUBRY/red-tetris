@@ -3,7 +3,7 @@ import Board from '../Board.js'
 import { getPiece } from '../../store_for_test.js';
 
 
-describe('Board Component', () => {	
+describe('Board server', () => {	
 
 	it('call board', () => {
 		let board = new Board(10, 20);
