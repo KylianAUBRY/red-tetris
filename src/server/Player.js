@@ -270,7 +270,7 @@ class Player {
 					this.stats.score +
 					SCORE_UNIT * factorial(clearCount) * (this.stats.level + 1),
 				lines: this.stats.lines + clearCount,
-				level: Math.floor(this.stats.lines / LEVEL_UP),
+				level: Math.floor((this.stats.lines + clearCount) / LEVEL_UP),
 			});
 			this.delay = Math.max(
 				MIN_DELAY,
@@ -305,7 +305,7 @@ class Player {
 			}
 			this.emit('move', direction);
 			return true;
-		} else if (direction === 'down') {
+		} else if (!isPlayer && direction === 'down') {
 			this.newTurn();
 		}
 		return false;

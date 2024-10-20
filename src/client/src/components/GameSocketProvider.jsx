@@ -35,7 +35,22 @@ import {
 	spectGame,
 } from '../reducers/game';
 import useBoxRef from '../hooks/useBoxRef';
-import { PROD, PORT } from '../../../constants';
+import { PROD, PORT, MOVE_DELAY, MOVE_INTERVAL } from '../../../constants';
+
+function setDelayedInterval(callback, delayTimeout, intervalTime, ...args) {
+	let timeoutId, intervalId;
+
+	timeoutId = setTimeout(() => {
+		intervalId = setInterval(callback, intervalTime, ...args);
+	}, delayTimeout);
+
+	return {
+		clear() {
+			clearTimeout(timeoutId);
+			clearInterval(intervalId);
+		},
+	};
+}
 
 export const SocketContext = createContext(null);
 
@@ -144,25 +159,54 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			console.log('Disconnected from server');
 		});
 
-		const handleKeyDown = (event) => {
-			if (event.key === 'ArrowLeft') {
-				socket.emit('move', 'left');
-			} else if (event.key === 'ArrowRight') {
-				socket.emit('move', 'right');
-			} else if (event.key === 'ArrowDown') {
-				socket.emit('move', 'down');
-			} else if (event.key === 'ArrowUp') {
-				socket.emit('rotate');
-			} else if (event.key === ' ') {
-				socket.emit('drop');
+		let keysInterval = new Map();
+
+		const handleKeyUp = (event) => {
+			const interval = keysInterval.get(event.key);
+			if (interval) {
+				interval.clear();
+				keysInterval.delete(event.key);
 			}
 		};
+
+		const handleKeyDown = (event) => {
+			if (!event.repeat) {
+				let move;
+				if (event.key === 'ArrowLeft') {
+					handleKeyUp({ key: 'ArrowRight' });
+					move = 'left';
+				} else if (event.key === 'ArrowRight') {
+					handleKeyUp({ key: 'ArrowLeft' });
+					move = 'right';
+				} else if (event.key === 'ArrowDown') {
+					move = 'down';
+				} else if (event.key === 'ArrowUp' && !event.repeat) {
+					socket.emit('rotate');
+				} else if (event.key === ' ' && !event.repeat) {
+					socket.emit('drop');
+				}
+				if (move) {
+					socket.emit('move', move);
+					keysInterval.set(
+						event.key,
+						setDelayedInterval(
+							() => socket.emit('move', move),
+							MOVE_DELAY,
+							MOVE_INTERVAL
+						)
+					);
+				}
+			}
+		};
+
 		window.addEventListener('keydown', handleKeyDown);
+		window.addEventListener('keyup', handleKeyUp);
 
 		socketRef.current = socket;
 
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
+			window.removeEventListener('keyup', handleKeyUp);
 			socket.disconnect();
 			socket.removeAllListeners();
 		};
