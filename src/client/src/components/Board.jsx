@@ -7,6 +7,7 @@ import { selectPiece } from '../reducers/piece';
 
 function pieceCollides(board, piece) {
 	return (
+		board.height <= piece.y ||
 		piece.shape.some((row, y) => {
 			return row.some((color, x) => {
 				return (
@@ -18,7 +19,7 @@ function pieceCollides(board, piece) {
 						board.grid[piece.y + y][piece.x + x])
 				);
 			});
-		}) || board.height <= piece.y
+		}) 
 	);
 }
 

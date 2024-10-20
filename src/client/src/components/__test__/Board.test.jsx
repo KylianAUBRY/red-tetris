@@ -12,44 +12,50 @@ const mockStore = configureStore([]);
 describe('Board Component', () => {
     let store;
 
-	let	initialState = {
-        board: {
-            grid: Array.from({ length: WIDTH }, () => Array(HEIGHT).fill(null)), // Grille initiale
-        },
-        piece: {
-            shape: [
-                [null, 'cyan', null],
-                ['cyan', 'cyan', 'cyan'],
-                [null, null, null],
-            ],
-            x: 3,
-            y: 3,
-        },
-    };
-
+	const initialState = {
+		board: {
+			grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(null)),
+			width: WIDTH,
+			height: HEIGHT
+		},
+		piece: {
+			shape: [
+				[null, 'cyan', null],
+				['cyan', 'cyan', 'cyan'],
+				[null, null, null],
+			],
+			x: 3,
+			y: 3,
+		},
+	};
     beforeEach(() => {
         store = mockStore(initialState); 
     });
 
 
     it('renders without crashing', () => {
-		render(
+		const {container} = render(
 			<Provider store={store}>
 				<Board />
 			</Provider>
 		);
 	  });
-
-	initialState.board.grid = Array.from({ length: WIDTH }, () => Array(HEIGHT).fill('red'));
-	initialState.board.grid[0][1] = 'yellow'
-	initialState.board.grid[0][2] = 'orange'
-	initialState.board.grid[0][3] = 'green'
-	initialState.board.grid[0][4] = 'purple'
-	initialState.board.grid[0][5] = 'cyan'
-	initialState.board.grid[0][6] = '#424242'
+	
 
 	it('renders without crashing', () => {
-		render(
+		let state = initialState;
+
+		state.board.grid[0][1] = 'yellow'
+		state.board.grid[0][2] = 'orange'
+		state.board.grid[0][3] = 'green'
+		state.board.grid[0][4] = 'purple'
+		state.board.grid[0][5] = 'cyan'
+		state.board.grid[0][6] = '#424242'
+		state.board.grid[0][7] = null
+
+        store = mockStore(state);
+
+        const { container } = render(
 			<Provider store={store}>
 				<Board />
 			</Provider>
@@ -67,15 +73,27 @@ describe('Board Component', () => {
 		expect(cells.length).toBe(HEIGHT * WIDTH);
 	});
 
+	it('renders cells the correct color when the transparent piece overlaps', () => {
 
-	
-	initialState.board.grid = Array.from({ length: WIDTH }, () => Array(HEIGHT).fill('red'));
-	initialState.piece.shape = [
-		[null, null, null],
-		[null, null, null],
-		[null, null, null],
-	],
-	it('renders cells the correct color when the piece overlaps', () => {
+		const state = {
+			board: {
+				grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red')),
+				width: WIDTH,
+				height: HEIGHT
+			},
+			piece: {
+				shape: [
+					[null, null, null],
+					[null, null, null],
+					[null, null, null],
+				],
+				x: 0,
+				y: 0,
+			},
+		};
+
+
+		store = mockStore(state);
 		const { container } = render(
 			<Provider store={store}>
 				<Board />
@@ -83,9 +101,41 @@ describe('Board Component', () => {
 		);
 		const cells = container.getElementsByClassName('board-cell');
 		for (let i = 0; i < cells.length; i++) {
-
-			expect(cells[i].style.getPropertyValue('--cell-color')).toBe("red"); // Toutes les cellules doivent avoir la couleur de la grille
+			expect(cells[i].style.getPropertyValue('--cell-color')).toBe("red");
 		}
 	});
+	
+	it('renders cells the correct color when the piece overlaps', () => {
 
+		const state = {
+			board: {
+				grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red')),
+				width: WIDTH,
+				height: HEIGHT
+			},
+			piece: {
+				shape: [
+					['blue', 'blue', 'blue'],
+					[null, null, 'blue'],
+					[null, null, 'blue'],
+				],
+				x: 0,
+				y: 0,
+			},
+		};
+
+		store = mockStore(state);
+		const { container } = render(
+			<Provider store={store}>
+				<Board />
+			</Provider>
+		);
+		const cells = container.getElementsByClassName('board-cell');
+		for (let i = 0; i < cells.length; i++) {
+			if (i == 0 || i == 1 || i == 2 || i == 12 || i == 22)
+				expect(cells[i].style.getPropertyValue('--cell-color')).toBe("blue");
+			else
+				expect(cells[i].style.getPropertyValue('--cell-color')).toBe("red");
+		}
+	});
 });
