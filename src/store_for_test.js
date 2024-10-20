@@ -57,3 +57,16 @@ export function getOpponent() {
 	};
 	return opponent;
 }
+
+export function getPiece() {
+	let piece =  {
+		shape: [
+			[null, 'cyan', null],
+			['cyan', 'cyan', 'cyan'],
+			[null, null, null],
+		],
+		x: 3,
+		y: 3,
+	}
+	return piece
+}

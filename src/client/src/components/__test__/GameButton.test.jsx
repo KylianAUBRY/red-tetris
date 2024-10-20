@@ -1,11 +1,22 @@
-import {expect, describe, beforeEach, it} from 'vitest';
+import {expect, describe, beforeEach, it, vi} from 'vitest';
 import GameButton from '../GameButton.jsx'
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { getStore } from "../../../../store_for_test.js"
+import useSocketRef from '../../hooks/useSocketRef';
 
+const mockSocketEmit = vi.fn();
+
+vi.mock('../../hooks/useSocketRef', () => ({
+	__esModule: true,
+	default: () => ({
+		current: {
+			emit: mockSocketEmit,
+		},
+	}),
+}));
 
 const mockStore = configureStore([]);
 
@@ -74,4 +85,32 @@ describe('GameButton Component', () => {
 		const button = container.getElementsByClassName('game-button')[0];
 		expect(button.textContent).toBe("Waiting owner");
 	});
+
+	it('calls the readyRequest function when clicked and player is not ready', async () => {
+		const socketRef = { current: { emit: mockSocketEmit } };
+		vi.spyOn(React, 'useRef').mockReturnValue(socketRef);
+
+        let state = initialState;
+        state.player.ready = false;
+		state.player.owner = false;
+        state.game.started = false;
+        const container = renderComponent(state);
+        const button = container.getElementsByClassName('game-button')[0];
+        fireEvent.click(button);
+        expect(mockSocketEmit).toHaveBeenCalledWith('ready');
+    });
+
+	it('calls the readyRequest function when clicked and player is ready', async () => {
+		const socketRef = { current: { emit: mockSocketEmit } };
+		vi.spyOn(React, 'useRef').mockReturnValue(socketRef);
+
+        let state = initialState;
+        state.player.ready = true;
+		state.player.owner = true;
+        state.game.started = false;
+        const container = renderComponent(state);
+        const button = container.getElementsByClassName('game-button')[0];
+        fireEvent.click(button);
+        expect(mockSocketEmit).toHaveBeenCalledWith('start');
+    });
 });

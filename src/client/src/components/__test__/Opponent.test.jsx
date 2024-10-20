@@ -18,11 +18,44 @@ describe('Opponent Component', () => {
         store = mockStore(initialState); 
     });
 
-	it('renders without crashing', () => {
+	it('renders without crashing 1', () => {
 		render(
 			<Provider store={store}>
 				<Opponent opponent={opponent}/>
 			</Provider>
 		);
 	});
+
+	it('renders without crashing 2', () => {
+		let state = initialState;
+		state.game.started = true;
+		opponent.lost = true;
+		store = mockStore(state);
+		render(
+			<Provider store={store}>
+				<Opponent opponent={opponent}/>
+			</Provider>
+		);
+	});
+
+	it('renders without crashing 3', () => {
+		opponent.ready = false;
+		render(
+			<Provider store={store}>
+				<Opponent opponent={opponent}/>
+			</Provider>
+		);
+	});
+
+	it('renders without crashing 4', () => {
+		opponent.ready = true;
+		opponent.lost = false;
+		opponent.owner = true;
+		render(
+			<Provider store={store}>
+				<Opponent opponent={opponent}/>
+			</Provider>
+		);
+	});
+
 });

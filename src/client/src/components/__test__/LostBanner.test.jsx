@@ -4,6 +4,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 describe('LostBanner Component', () => {
+
 	it('renders without crashing', () => {
 		render(
 			<LostBanner />
