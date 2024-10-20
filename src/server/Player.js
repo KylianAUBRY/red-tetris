@@ -93,7 +93,7 @@ class Player {
 		if (this.lost !== value) {
 			this.lost = value;
 			this.emit('lost', value);
-			this.gameSend('lost', value);
+			this.gameSend('lost', value, this.board.toColHeights());
 		}
 	}
 
@@ -120,9 +120,9 @@ class Player {
 				this.emit('updateOpponent', { name: player_name, ready });
 			}
 		});
-		this.gameSub('lost', (player_name, lost) => {
+		this.gameSub('lost', (player_name, lost, colHeights) => {
 			if (player_name !== this.name) {
-				this.emit('updateOpponent', { name: player_name, lost });
+				this.emit('updateOpponent', { name: player_name, lost, colHeights });
 			}
 		});
 		this.gameSub('stats', (player_name, stats) => {

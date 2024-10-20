@@ -11,6 +11,7 @@ import {
 	BACK_COLOR,
 	BOARD_COLOR,
 	FRONT_COLOR,
+	LOST_COLOR,
 } from '../../constants';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
 		'--back-color': BACK_COLOR,
 		'--board-color': BOARD_COLOR,
 		'--front-color': FRONT_COLOR,
+		'--lost-color': LOST_COLOR,
 	};
 
 	return (

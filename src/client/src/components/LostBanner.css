@@ -8,7 +8,7 @@
 	left: 0;
 	right: 0;
 	min-height: fit-content;
-	background-color: rgb(from var(--front-color) r g b / 70%);
+	background-color: rgb(from var(--lost-color) r g b / 70%);
 	border-radius: 0.2vmin;
 }
 

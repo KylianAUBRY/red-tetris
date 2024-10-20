@@ -26,12 +26,12 @@
 }
 
 .game-button:hover {
-	transform: translateY(-0.1vmin);
+	transform: translateY(-0.2vmin);
 }
 
 .game-button:active {
 	box-shadow: inset 0 0.5vmin 1vmin var(--dark-front-color);
-	transform: translateY(0.1vmin);
+	transform: translateY(0.2vmin);
 }
 
 .game-button:disabled {
