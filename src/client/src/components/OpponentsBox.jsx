@@ -5,7 +5,7 @@ import Opponent from './Opponent';
 import { useSelector } from 'react-redux';
 import { selectOpponents } from '../reducers/game';
 
-export default function Opponents() {
+export default function OpponentsBox() {
 	const opponents = useSelector(selectOpponents);
 	return (
 		<div className='opponents-box'>
