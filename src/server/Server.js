@@ -4,9 +4,9 @@ import Game from './Game.js';
 
 class Server {
 	constructor(server, config) {
-		this.io = new SocketServer(server, config);
 		this.games = new Map();
 		this.topic = new EventEmitter();
+		this.io = new SocketServer(server, config);
 		this.io.on('connection', this.onConnection.bind(this));
 		this.initTopic();
 	}
@@ -43,7 +43,9 @@ class Server {
 	}
 
 	removeGame(room) {
+		console.log("test")
 		const game = this.games.get(room);
+		console.error(game + "qdqdhqwdqdwghjdqhjkgqwd")
 		if (game) {
 			game.delete();
 			this.games.delete(room);

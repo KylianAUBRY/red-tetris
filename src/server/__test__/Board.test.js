@@ -5,17 +5,17 @@ import { getPiece } from '../../store_for_test.js';
 
 describe('Board server', () => {	
 
-	it('call board', () => {
+	it('call Board', () => {
 		let board = new Board(10, 20);
 	});
 
-	it('call board function setCell', () => {
+	it('call Board function setCell', () => {
 		let board = new Board(10, 20);
 		board.setCell(1, 1, "white")
 		expect(board.grid[1][1]).toBe("white");
 	});
 
-	it('call board function fixPiece', () => {
+	it('call Board function fixPiece', () => {
 		let piece = getPiece();
 		let board = new Board(10, 20);
 
@@ -23,7 +23,7 @@ describe('Board server', () => {
 		expect(board.grid[3][4]).toBe("cyan");
 	});
 
-	it('call board function pieceCollides', () => {
+	it('call Board function pieceCollides', () => {
 		let piece = getPiece();
 		let board = new Board(10, 20);
 
@@ -33,7 +33,7 @@ describe('Board server', () => {
 		expect(board.pieceCollides(piece)).toBe(false);
 	});
 
-	it('call board function pieceOutOfBounds', () => {
+	it('call Board function pieceOutOfBounds', () => {
 		let piece = getPiece();
 		let board = new Board(10, 20);
 
@@ -42,7 +42,7 @@ describe('Board server', () => {
 		expect(board.pieceOutOfBounds(piece)).toBe(true);
 	});
 
-	it('call board function pieceTotallyOutOfBounds', () => {
+	it('call Board function pieceTotallyOutOfBounds', () => {
 		let piece = getPiece();
 		let board = new Board(10, 20);
 
@@ -53,7 +53,7 @@ describe('Board server', () => {
 		expect(board.pieceTotallyOutOfBounds(piece)).toBe(true);
 	});
 
-	it('call board function toColHeights', () => {
+	it('call Board function toColHeights', () => {
 		let board = new Board(10, 20);
 		expect(board.toColHeights()).toStrictEqual(Array(10).fill(0));
 		for(let i = 0; i < 10; i ++) {
@@ -61,7 +61,7 @@ describe('Board server', () => {
 		}
 		expect(board.toColHeights()).toStrictEqual(Array(10).fill(19));
 	});
-	it('call board function clearLine', () => {
+	it('call Board function clearLine', () => {
 		let board = new Board(10, 20);
 		for(let i = 0; i < 10; i ++) {
 			board.setCell(i, 1, "white");
@@ -70,14 +70,14 @@ describe('Board server', () => {
 		expect(board.grid[1]).toStrictEqual(Array(10).fill(null));
 	});
 
-	it('call board function addPenalityLines', () => {
+	it('call Board function addPenalityLines', () => {
 		let board = new Board(10, 20);
 		
 		board.addPenalityLines(Array(10).fill('b'), 1)
 		expect(board.grid[19]).toStrictEqual(Array(10).fill('b'));
 	});
 
-	it('call board function addPenalityLines', () => {
+	it('call Board function clearGrid', () => {
 		let board = new Board(10, 20);
 		
 		board.setCell(1, 1, "white")
