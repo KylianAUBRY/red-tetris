@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { WIDTH, HEIGHT, PENALITY_COLOR } from '../../../constants';
+import { WIDTH, HEIGHT } from '../../../constants';
 
 export const boardSlice = createSlice({
 	name: 'board',
@@ -46,6 +46,7 @@ export const boardSlice = createSlice({
 export const { setBoard, fixPiece, clearLine, penalityLines } =
 	boardSlice.actions;
 
+export const selectBoard = (state) => state.board;
 export const selectGrid = (state) => state.board.grid;
 export const selectSize = (state) => {
 	state.board.width, state.board.height;

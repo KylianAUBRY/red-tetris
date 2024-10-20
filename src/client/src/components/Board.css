@@ -22,3 +22,10 @@
 		inset -0.4vmin 0 0 0 rgba(0, 0, 0, 0.2),
 		0 1vmin 0.4vmin rgba(0, 0, 0, 0.3);
 }
+
+.piece-cell {
+}
+
+.ghost-cell {
+	background-color: rgb(from var(--cell-color) r g b / 50%);
+}
