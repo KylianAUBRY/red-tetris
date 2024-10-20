@@ -4,37 +4,15 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { FRONT_COLOR,
-	OWNER_COLOR,
-	SPECT_COLOR,
-	LOST_COLOR,
-	HEIGHT
-} from '../../../../constants.js';
+import { getStore, getOpponent } from "../../store.js"
 
 const mockStore = configureStore([]);
 
-describe('Opponent Component', () => {
+describe('OpponentBox Component', () => {
 	let store;
 
-	let opponent =  {
-		name : "test",
-		ready : false,
-		lost: false,
-		owner: false,
-		colHeights: Array(HEIGHT).fill(2),
-		stats : {
-			score: 1,
-			level: 2,
-			lines: 5
-		}
-	};
-	
-	const initialState = {
-		game : {
-			started : false,
-			opponents: Array(5).fill(opponent)
-		}
-	};
+	let opponent = getOpponent();
+	let initialState = getStore();
 	initialState.game.opponents[0].owner = true;
 
 	beforeEach(() => {

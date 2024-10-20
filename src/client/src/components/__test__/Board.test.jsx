@@ -5,29 +5,15 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { HEIGHT, WIDTH } from '../../../../constants.js';
+import { getStore } from "../../store.js"
 
 
 const mockStore = configureStore([]);
 
 describe('Board Component', () => {
     let store;
-
-	const initialState = {
-		board: {
-			grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(null)),
-			width: WIDTH,
-			height: HEIGHT
-		},
-		piece: {
-			shape: [
-				[null, 'cyan', null],
-				['cyan', 'cyan', 'cyan'],
-				[null, null, null],
-			],
-			x: 3,
-			y: 3,
-		},
-	};
+	const initialState = getStore();
+	
     beforeEach(() => {
         store = mockStore(initialState); 
     });
@@ -74,24 +60,17 @@ describe('Board Component', () => {
 	});
 
 	it('renders cells the correct color when the transparent piece overlaps', () => {
-
-		const state = {
-			board: {
-				grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red')),
-				width: WIDTH,
-				height: HEIGHT
-			},
-			piece: {
-				shape: [
-					[null, null, null],
-					[null, null, null],
-					[null, null, null],
-				],
-				x: 0,
-				y: 0,
-			},
-		};
-
+		let state = initialState;
+		state.board.grid = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red'))
+		state.piece =  {
+			shape: [
+				[null, null, null],
+				[null, null, null],
+				[null, null, null],
+			],
+			x: 0,
+			y: 0,
+		}
 
 		store = mockStore(state);
 		const { container } = render(
@@ -106,23 +85,17 @@ describe('Board Component', () => {
 	});
 	
 	it('renders cells the correct color when the piece overlaps', () => {
-
-		const state = {
-			board: {
-				grid: Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red')),
-				width: WIDTH,
-				height: HEIGHT
-			},
-			piece: {
-				shape: [
-					['blue', 'blue', 'blue'],
-					[null, null, 'blue'],
-					[null, null, 'blue'],
-				],
-				x: 0,
-				y: 0,
-			},
-		};
+		let state = initialState;
+		state.board.grid = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('red'))
+		state.piece =  {
+			shape: [
+				['blue', 'blue', 'blue'],
+				[null, null, 'blue'],
+				[null, null, 'blue'],
+			],
+			x: 0,
+			y: 0,
+		}
 
 		store = mockStore(state);
 		const { container } = render(

@@ -1,5 +1,5 @@
 import {expect, describe, beforeEach, it} from 'vitest';
-import Opponent from '../Opponent.jsx'
+import Player from '../Player.jsx'
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -8,7 +8,7 @@ import { getStore, getOpponent } from "../../store.js"
 
 const mockStore = configureStore([]);
 
-describe('Opponent Component', () => {
+describe('Player Component', () => {
 	let store;
 
 	let opponent = getOpponent();
@@ -21,7 +21,7 @@ describe('Opponent Component', () => {
 	it('renders without crashing', () => {
 		render(
 			<Provider store={store}>
-				<Opponent opponent={opponent}/>
+				<Player />
 			</Provider>
 		);
 	});

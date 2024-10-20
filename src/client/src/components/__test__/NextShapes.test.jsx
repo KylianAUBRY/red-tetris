@@ -4,19 +4,14 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { NEXT_PIECE_COUNT } from '../../../../constants';
+import { getStore } from "../../store.js"
 
 const mockStore = configureStore([]);
 
 describe('NextShapes Component', () => {
 	let store;
 
-	const initialState = {
-		nextShapes : {
-			shapes : Array(NEXT_PIECE_COUNT).fill([[null]]),
-		}
-		
-	};
+	const initialState = getStore();
 
 	beforeEach(() => {
         store = mockStore(initialState); 
