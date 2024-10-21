@@ -45,7 +45,6 @@ class Game {
 
 	addPlayer(socket) {
 		const player_name = socket.handshake.auth.player_name;
-
 		if (!player_name) {
 			socket.emit('error', 'Player name not provided');
 		} else {

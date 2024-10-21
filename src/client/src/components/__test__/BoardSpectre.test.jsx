@@ -6,13 +6,10 @@ import { WIDTH } from '../../../../constants.js';
 
 
 describe('BoardSpectre Component', () => {
-
     it('renders without crashing', () => {
 		const colHeights = Array(WIDTH).fill(1);
-			const { container } = render(
+			render(
 				<BoardSpectre colHeights={colHeights}/>
 			);
 	  });
-	
-
 });

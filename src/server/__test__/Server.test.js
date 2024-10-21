@@ -1,22 +1,21 @@
 import {expect, describe, beforeEach, it, vi} from 'vitest';
 import Server from '../Server.js'
-import { mock } from 'node:test';
 // import crypto from 'crypto';
 
 vi.mock('socket.io', async () => {
 	const original = await vi.importActual('socket.io');
 	return {
-	  ...original,
-	  SocketServer: vi.fn(),
+		...original,
+		SocketServer: vi.fn(),
 	};
-  });
+});
 
 vi.mock('crypto', () => ({
 	randomUUID: vi.fn(() => 'mock-session-id'),
 }));
 
 describe('Server server', () => {	
-	let serverInstance, mockSocket, games;
+	let serverInstance, mockSocket;
 
 	beforeEach(async () => {
 		serverInstance = new Server({}, {})
@@ -27,8 +26,8 @@ describe('Server server', () => {
 			emit: vi.fn(),
 			handshake: {
 				auth: {}
-		}
-    };
+			}
+    	};
 	});
 
 	it('call Server', () => {
