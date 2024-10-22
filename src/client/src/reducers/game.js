@@ -5,13 +5,15 @@ function findOpponent(opponents, name) {
 	return opponents.find((opponent) => opponent.name === name);
 }
 
+const initialState = {
+	room: null,
+	started: false,
+	opponents: new Array(),
+};
+
 export const playerSlice = createSlice({
 	name: 'game',
-	initialState: {
-		room: null,
-		started: false,
-		opponents: new Array(),
-	},
+	initialState: { ...initialState },
 	reducers: {
 		startGame: (state) => {
 			state.started = true;
@@ -55,6 +57,9 @@ export const playerSlice = createSlice({
 			state.started = false;
 			state.opponents = new Array();
 		},
+		resetGame: (state) => {
+			Object.assign(state, initialState);
+		},
 	},
 });
 
@@ -67,6 +72,7 @@ export const {
 	removeOpponent,
 	updateOpponent,
 	gameDisconnection,
+	resetGame,
 } = playerSlice.actions;
 
 export const selectGame = (state) => state.game;

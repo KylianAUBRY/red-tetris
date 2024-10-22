@@ -9,7 +9,6 @@ import {
 	ACCELERATION,
 	NEXT_PIECE_COUNT,
 	PENALITY_COLOR,
-	PIECE_COUNT,
 	LEVEL_UP,
 	SCORE_UNIT,
 	DEFAULT_STATS,
@@ -70,23 +69,19 @@ class Player {
 		}
 	}
 
-	setOwner(value, isNewRoom = false) {
-		if (this.owner !== value) {
-			this.owner = value;
-			this.emit('owner', value, isNewRoom);
-			this.gameSend('owner', value);
-			if (this.owner) {
-				this.setReady(true);
-			}
+	setOwner(value) {
+		this.owner = value;
+		this.emit('owner', value);
+		this.gameSend('owner', value);
+		if (this.owner) {
+			this.setReady(true);
 		}
 	}
 
 	setReady(value) {
-		if (this.ready !== value) {
-			this.ready = value;
-			this.emit('ready', value);
-			this.gameSend('ready', value);
-		}
+		this.ready = value;
+		this.emit('ready', value);
+		this.gameSend('ready', value);
 	}
 
 	setLost(value) {
@@ -247,17 +242,20 @@ class Player {
 	}
 
 	newPiece() {
-		let newShape = this.nextShapes.shift();
-		this.piece = new Piece(newShape, Math.floor((WIDTH - newShape.length) / 2));
-		if (this.nextShapes.length <= PIECE_COUNT) {
+		while (this.nextShapes.length <= NEXT_PIECE_COUNT) {
 			this.generateNextShapes();
 		}
+		let newShape = this.nextShapes.shift();
+		this.piece = new Piece(newShape, Math.floor((WIDTH - newShape.length) / 2));
 		while (this.board.pieceCollides(this.piece)) {
 			this.piece.y -= 1;
 		}
 	}
 
 	newTurn() {
+		while (this.board.pieceCollides(this.piece)) {
+			this.piece.y -= 1;
+		}
 		if (this.board.pieceOutOfBounds(this.piece)) {
 			this.lose();
 			return false;
@@ -344,10 +342,12 @@ class Player {
 		if (!this.lost && 0 < count) {
 			let line = Array(WIDTH).fill(PENALITY_COLOR);
 			line[Math.floor(Math.random() * WIDTH)] = null;
-
-			this.board.addPenalityLines(line, count);
+			const lose = this.board.addPenalityLines(line, count);
 			this.emit('penality', line, count);
 			this.gameSend('penality', this.board.toColHeights());
+			if (lose) {
+				this.lose();
+			}
 		}
 	}
 
@@ -365,7 +365,7 @@ class Player {
 	lose() {
 		this.clearGameEvents();
 		clearInterval(this.gravity);
-		this.nextShapes = [];
+		this.nextShapes = new Array();
 		this.setLost(true);
 	}
 
@@ -374,7 +374,7 @@ class Player {
 		clearInterval(this.gravity);
 		this.board.clearGrid();
 		this.piece = null;
-		this.nextShapes = [];
+		this.nextShapes = new Array();
 		this.clearGameTopic();
 		this.disconnection();
 		this.setOwner(false);

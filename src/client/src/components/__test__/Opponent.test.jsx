@@ -1,10 +1,10 @@
-import {expect, describe, beforeEach, it} from 'vitest';
-import Opponent from '../Opponent.jsx'
+import { describe, beforeEach, it } from 'vitest';
+import Opponent from '../Opponent.jsx';
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { getStore, getOpponent } from "../../../../store_for_test.js"
+import { getStore, getOpponent } from '../../../../store_for_test.js';
 
 const mockStore = configureStore([]);
 
@@ -15,13 +15,13 @@ describe('Opponent Component', () => {
 	const initialState = getStore();
 
 	beforeEach(() => {
-        store = mockStore(initialState); 
-    });
+		store = mockStore(initialState);
+	});
 
 	it('renders without crashing 1', () => {
 		render(
 			<Provider store={store}>
-				<Opponent opponent={opponent}/>
+				<Opponent opponent={opponent} />
 			</Provider>
 		);
 	});
@@ -33,7 +33,7 @@ describe('Opponent Component', () => {
 		store = mockStore(state);
 		render(
 			<Provider store={store}>
-				<Opponent opponent={opponent}/>
+				<Opponent opponent={opponent} />
 			</Provider>
 		);
 	});
@@ -42,7 +42,7 @@ describe('Opponent Component', () => {
 		opponent.ready = false;
 		render(
 			<Provider store={store}>
-				<Opponent opponent={opponent}/>
+				<Opponent opponent={opponent} />
 			</Provider>
 		);
 	});
@@ -53,9 +53,8 @@ describe('Opponent Component', () => {
 		opponent.owner = true;
 		render(
 			<Provider store={store}>
-				<Opponent opponent={opponent}/>
+				<Opponent opponent={opponent} />
 			</Provider>
 		);
 	});
-
 });

@@ -1,16 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_STATS } from '../../../constants';
 
+const initialState = {
+	name: null,
+	connected: false,
+	owner: false,
+	ready: false,
+	lost: true,
+	stats: DEFAULT_STATS,
+};
+
 export const playerSlice = createSlice({
 	name: 'player',
-	initialState: {
-		name: null,
-		connected: false,
-		owner: false,
-		ready: false,
-		lost: true,
-		stats: DEFAULT_STATS,
-	},
+	initialState: { ...initialState },
 	reducers: {
 		setPlayerName(state, action) {
 			state.name = action.payload;
@@ -33,6 +35,9 @@ export const playerSlice = createSlice({
 		playerDisconnection: (state) => {
 			state.connected = false;
 		},
+		resetPlayer: (state) => {
+			Object.assign(state, initialState);
+		},
 	},
 });
 
@@ -44,6 +49,7 @@ export const {
 	updatePlayerStats,
 	playerConnection,
 	playerDisconnection,
+	resetPlayer,
 } = playerSlice.actions;
 
 export const selectPlayer = (state) => state.player;

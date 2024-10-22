@@ -43,9 +43,7 @@ class Server {
 	}
 
 	removeGame(room) {
-		console.log("test")
 		const game = this.games.get(room);
-		console.error(game + "qdqdhqwdqdwghjdqhjkgqwd")
 		if (game) {
 			game.delete();
 			this.games.delete(room);

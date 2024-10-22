@@ -1,0 +1,77 @@
+.Home {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 1;
+	background-color: var(--back-color);
+}
+
+.Home form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 70vmin;
+	height: 30vmin;
+	background-color: var(--front-color);
+	border: solid 0.4vmin black;
+	border-radius: 1vmin;
+}
+
+.Home input {
+	user-select: auto;
+	display: block;
+	width: 50vmin;
+	height: 5vmin;
+	margin: 1vmin;
+	padding: 0 2vmin;
+	background-color: var(--back-color);
+	border: 0.4vmin solid black;
+	border-radius: 0.5vmin;
+	color: inherit;
+}
+
+.Home button {
+	--shadow-color: color-mix(in srgb, #000000 50%, var(--back-color) 50%);
+	outline: 0;
+	will-change: box-shadow, transform;
+	box-shadow: inset 0 -0.5vmin 0 var(--shadow-color);
+	display: inline-block;
+	overflow: hidden;
+	width: 40vmin;
+	height: 5vmin;
+	padding: 0;
+	transition:
+		box-shadow 0.15s ease,
+		transform 0.15s ease;
+	background-color: var(--back-color);
+	cursor: pointer;
+	border: 0;
+	border-radius: 0.5vmin;
+	margin: 1.5vmin;
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: bold;
+	color: inherit;
+	text-align: center;
+	text-decoration: none;
+}
+
+.Home button:hover {
+	transform: translateY(-0.2vmin);
+}
+
+.Home button:active {
+	box-shadow: inset 0 0.5vmin 1vmin var(--shadow-color);
+	transform: translateY(0.2vmin);
+}
+
+.Home input:focus {
+	border: 0.4vmin solid var(--front-color);
+}
+
+.Home p {
+	margin: 0;
+	font-size: 70%;
+	color: var(--lost-color);
+}

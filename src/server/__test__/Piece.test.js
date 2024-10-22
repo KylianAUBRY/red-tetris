@@ -1,12 +1,10 @@
-import {expect, describe, beforeEach, it} from 'vitest';
-import Piece from '../Piece.js'
+import { expect, describe, it } from 'vitest';
+import Piece from '../Piece.js';
 import { getPiece } from '../../store_for_test.js';
 
-
 describe('Piece server', () => {
-
 	it('call Piece', () => {
-		let piece = new Piece(getPiece().shape, 1, 1);
+		new Piece(getPiece().shape, 1, 1);
 	});
 
 	it('call Piece function clone', () => {
@@ -32,8 +30,8 @@ describe('Piece server', () => {
 		let tmpShape = [
 			[null, 'cyan', null],
 			[null, 'cyan', 'cyan'],
-			[null, 'cyan', null]
-		]
+			[null, 'cyan', null],
+		];
 		piece.rotate();
 		expect(piece.shape).toStrictEqual(tmpShape);
 	});

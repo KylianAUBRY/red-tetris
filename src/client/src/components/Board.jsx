@@ -2,26 +2,8 @@ import React from 'react';
 import './Board.css';
 
 import { useSelector } from 'react-redux';
-import { selectBoard } from '../reducers/board';
+import { pieceCollides, selectBoard } from '../reducers/board';
 import { selectPiece } from '../reducers/piece';
-
-function pieceCollides(board, piece) {
-	return (
-		board.height <= piece.y ||
-		piece.shape.some((row, y) => {
-			return row.some((color, x) => {
-				return (
-					color &&
-					0 <= piece.y + y &&
-					(piece.x + x < 0 ||
-						board.width <= piece.x + x ||
-						board.height <= piece.y + y ||
-						board.grid[piece.y + y][piece.x + x])
-				);
-			});
-		}) 
-	);
-}
 
 function getGhost(board, piece) {
 	const ghost = { ...piece };

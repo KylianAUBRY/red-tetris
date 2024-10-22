@@ -1,58 +1,60 @@
-import {expect, describe, beforeEach, it, vi} from 'vitest';
-import Player from '../Player.js'
-import { DEFAULT_STATS,
-	 PIECE_I,
+import { expect, describe, beforeEach, it, vi } from 'vitest';
+import Player from '../Player.js';
+import {
+	DEFAULT_STATS,
+	PIECE_I,
 	PIECE_O,
 	PIECE_T,
 	PIECE_J,
 	PIECE_L,
 	PIECE_S,
 	PIECE_Z,
-} from '../../constants.js'
+} from '../../constants.js';
 
 describe('Game server', () => {
-	let playerInstance, mockSocket;
+	let playerInstance;
 
 	it('call player', () => {
-		let game = new Player("test", {on: vi.fn()});
+		new Player('test', { on: vi.fn() });
 	});
 
 	beforeEach(async () => {
-		playerInstance = new Player("test", {on: vi.fn(), emit: vi.fn(), off: vi.fn()});
-		playerInstance.socket = {on: vi.fn(), emit: vi.fn(), handshake: { 
-			auth: {
-				sessionid: 10
-			}
-		}};
-
-		mockSocket = {
+		playerInstance = new Player('test', {
+			on: vi.fn(),
+			emit: vi.fn(),
+			off: vi.fn(),
+		});
+		playerInstance.socket = {
+			on: vi.fn(),
 			emit: vi.fn(),
 			handshake: {
-				auth: {}
-			}
-    	};
+				auth: {
+					sessionid: 10,
+				},
+			},
+		};
 	});
 	it('call gameSub', () => {
-		playerInstance.gameSub("", {bind: vi.fn()});
+		playerInstance.gameSub('', { bind: vi.fn() });
 		expect(playerInstance.gameTopic.on).toHaveBeenCalled();
-		expect(playerInstance.gameSubArray).not.toBe()
+		expect(playerInstance.gameSubArray).not.toBe();
 		expect(playerInstance.gameSubArray).toBeTruthy();
 	});
 
 	it('call gameSend', () => {
-		playerInstance.gameSend("", {bind: vi.fn()});
+		playerInstance.gameSend('', { bind: vi.fn() });
 		expect(playerInstance.gameTopic.emit).toHaveBeenCalled();
 	});
 
 	it('call on', () => {
 		playerInstance.connected = true;
-		playerInstance.on("", {bind: vi.fn()});
+		playerInstance.on('', { bind: vi.fn() });
 		expect(playerInstance.socket.on).toHaveBeenCalled();
 	});
 
 	it('call emit', () => {
 		playerInstance.connected = true;
-		playerInstance.emit("", {bind: vi.fn()});
+		playerInstance.emit('', { bind: vi.fn() });
 		expect(playerInstance.socket.emit).toHaveBeenCalled();
 	});
 
@@ -75,155 +77,241 @@ describe('Game server', () => {
 	});
 
 	it('call updateStats', () => {
-		playerInstance.updateStats({...DEFAULT_STATS});
+		playerInstance.updateStats({ ...DEFAULT_STATS });
 	});
 	let tmpInstance;
 
 	it('call initGameTopic', () => {
-		tmpInstance = new Player("test", {on: vi.fn(), emit: vi.fn(), off: vi.fn()});
-		tmpInstance.socket = {on: vi.fn(), emit: vi.fn()}
+		tmpInstance = new Player('test', {
+			on: vi.fn(),
+			emit: vi.fn(),
+			off: vi.fn(),
+		});
+		tmpInstance.socket = { on: vi.fn(), emit: vi.fn() };
 
 		tmpInstance.gameSub = vi.fn();
-		tmpInstance.endGame = vi.fn()
+		tmpInstance.endGame = vi.fn();
 		tmpInstance.emit = vi.fn();
-		tmpInstance.name = "player1";
+		tmpInstance.name = 'player1';
 		tmpInstance.initGameTopic();
 
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('start', tmpInstance.startGame);
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('connect', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('owner', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('ready', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('lost', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('stats', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('newTurn', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('penality', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('quit', expect.any(Function));
-		expect(tmpInstance.gameSub).toHaveBeenCalledWith('end', tmpInstance.endGame);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'start',
+			tmpInstance.startGame
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'connect',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'owner',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'ready',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'lost',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'stats',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'newTurn',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'penality',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'quit',
+			expect.any(Function)
+		);
+		expect(tmpInstance.gameSub).toHaveBeenCalledWith(
+			'end',
+			tmpInstance.endGame
+		);
 	});
 
 	it('should emit readyCallback', () => {
 		let ready = true;
-		const readyCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'ready')[1];
+		const readyCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'ready'
+		)[1];
 		readyCallback('player2', ready);
 
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', ready });
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			ready,
+		});
 	});
 
 	it('should emit addOpponent', () => {
 		const opponent = 'player2';
 		tmpInstance.initGameTopic();
-		
-		const connectCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'connect')[1];
+
+		const connectCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'connect'
+		)[1];
 		connectCallback('player2', opponent);
 
 		expect(tmpInstance.emit).toHaveBeenCalledWith('addOpponent', opponent);
 	});
-	
-	  it('should emit updateOpponent', () => {
+
+	it('should emit updateOpponent', () => {
 		const owner = true;
 		tmpInstance.initGameTopic();
-		const ownerCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'owner')[1];
+		const ownerCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'owner'
+		)[1];
 		ownerCallback('player2', owner);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', owner });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			owner,
+		});
 	});
-	
+
 	it('should emit updateOpponent', () => {
-		const ready = true; 
+		const ready = true;
 		tmpInstance.initGameTopic();
-	
-		const readyCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'ready')[1];
+
+		const readyCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'ready'
+		)[1];
 		readyCallback('player2', ready);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', ready });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			ready,
+		});
 	});
-	
+
 	it('should emit updateOpponent', () => {
 		const lost = true;
 		const colHeights = [1, 2, 3];
 		tmpInstance.initGameTopic();
-	
-		const lostCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'lost')[1];
+
+		const lostCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'lost'
+		)[1];
 		lostCallback('player2', lost, colHeights);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', lost, colHeights });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			lost,
+			colHeights,
+		});
 	});
 
 	it('should emit updateOpponent', () => {
 		const stats = { score: 100 };
 		tmpInstance.initGameTopic();
-	
-		const statsCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'stats')[1];
+
+		const statsCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'stats'
+		)[1];
 		statsCallback('player2', stats);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', stats });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			stats,
+		});
 	});
-	
+
 	it('should emit updateOpponent', () => {
 		const clearCount = 2;
-		const colHeights = [1, 2, 3]; 
+		const colHeights = [1, 2, 3];
 		tmpInstance.initGameTopic();
-	
-		const newTurnCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'newTurn')[1];
+
+		const newTurnCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'newTurn'
+		)[1];
 		newTurnCallback('player2', clearCount, colHeights);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', colHeights });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			colHeights,
+		});
 	});
-	
+
 	it('should emit updateOpponent', () => {
 		const colHeights = [1, 2, 3];
 		tmpInstance.initGameTopic();
-	
-		const penaltyCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'penality')[1];
+
+		const penaltyCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'penality'
+		)[1];
 		penaltyCallback('player2', colHeights);
-	
-		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', { name: 'player2', colHeights });
+
+		expect(tmpInstance.emit).toHaveBeenCalledWith('updateOpponent', {
+			name: 'player2',
+			colHeights,
+		});
 	});
-	
+
 	it('should emit removeOpponent', () => {
 		tmpInstance.initGameTopic();
-	
-		const quitCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'quit')[1];
+
+		const quitCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'quit'
+		)[1];
 		quitCallback('player2');
-	
+
 		expect(tmpInstance.emit).toHaveBeenCalledWith('removeOpponent', 'player2');
 	});
-	
+
 	it('should call endGame', () => {
 		tmpInstance.initGameTopic();
-	
-		const endCallback = tmpInstance.gameSub.mock.calls.find(call => call[0] === 'end')[1];
+
+		const endCallback = tmpInstance.gameSub.mock.calls.find(
+			(call) => call[0] === 'end'
+		)[1];
 		endCallback();
-	
+
 		expect(tmpInstance.endGame).toHaveBeenCalled();
 	});
 
 	it('call clearGameTopic', () => {
-		let size = tmpInstance.gameSubArray.length
+		let size = tmpInstance.gameSubArray.length;
 		tmpInstance.clearGameTopic();
 
 		expect(tmpInstance.gameTopic.off).toHaveBeenCalledTimes(size);
-		expect(tmpInstance.gameSubArray.length).toBe(0)
+		expect(tmpInstance.gameSubArray.length).toBe(0);
 	});
 
 	it('call connection', () => {
-		playerInstance.connection({on: vi.fn(), emit: vi.fn()});
+		playerInstance.connection({ on: vi.fn(), emit: vi.fn() });
 		playerInstance.connected = true;
-		playerInstance.socket = {on: vi.fn(), emit: vi.fn(), handshake: { 
-			auth: {
-				sessionid: 1
-			}
-		}};
-		playerInstance.connection({on: vi.fn(), emit: vi.fn(), handshake: { 
-			auth: {
-				sessionid: 10
-			}
-		}});
-
+		playerInstance.socket = {
+			on: vi.fn(),
+			emit: vi.fn(),
+			handshake: {
+				auth: {
+					sessionid: 1,
+				},
+			},
+		};
+		playerInstance.connection({
+			on: vi.fn(),
+			emit: vi.fn(),
+			handshake: {
+				auth: {
+					sessionid: 10,
+				},
+			},
+		});
 	});
 
 	it('call disconnection', () => {
-		playerInstance.socket = { removeAllListeners: vi.fn(), disconnect: vi.fn()}
+		playerInstance.socket = {
+			removeAllListeners: vi.fn(),
+			disconnect: vi.fn(),
+		};
 		playerInstance.connected = true;
 		playerInstance.disconnection();
 	});
@@ -240,10 +328,13 @@ describe('Game server', () => {
 	});
 
 	it('call clearGameEvents', () => {
-		playerInstance.socket = {...playerInstance.socket, removeAllListeners: vi.fn()}
+		playerInstance.socket = {
+			...playerInstance.socket,
+			removeAllListeners: vi.fn(),
+		};
 		playerInstance.clearGameEvents();
 	});
-	
+
 	it('call endGame', () => {
 		playerInstance.endGame({});
 	});
@@ -287,12 +378,24 @@ describe('Game server', () => {
 		];
 		playerInstance.nextShapes.push(...playerInstance.rand.shuf(shapesBundle));
 		playerInstance.board.clearLine = vi.fn().mockRejectedValue(true);
-		playerInstance.board.pieceTotallyOutOfBounds = vi.fn().mockRejectedValue(true);
+		playerInstance.board.pieceTotallyOutOfBounds = vi
+			.fn()
+			.mockRejectedValue(true);
 		playerInstance.newTurn();
 	});
 
 	it('call movePiece', () => {
-		let obj = {x: 0, y: 0, clone: vi.fn().mockReturnValue({x: 0, y: 0, clone: vi.fn().mockReturnValue(), move: vi.fn()}), move: vi.fn()}
+		let obj = {
+			x: 0,
+			y: 0,
+			clone: vi.fn().mockReturnValue({
+				x: 0,
+				y: 0,
+				clone: vi.fn().mockReturnValue(),
+				move: vi.fn(),
+			}),
+			move: vi.fn(),
+		};
 		playerInstance.piece = obj;
 		playerInstance.board.pieceCollides = vi.fn();
 		playerInstance.movePiece('down', true);
@@ -304,14 +407,36 @@ describe('Game server', () => {
 	});
 
 	it('call rotatePiece', () => {
-		let obj = {x: 0, y: 0, clone: vi.fn().mockReturnValue({x: 0, y: 0, clone: vi.fn().mockReturnValue(), move: vi.fn(), rotate: vi.fn()}), move: vi.fn()}
+		let obj = {
+			x: 0,
+			y: 0,
+			clone: vi.fn().mockReturnValue({
+				x: 0,
+				y: 0,
+				clone: vi.fn().mockReturnValue(),
+				move: vi.fn(),
+				rotate: vi.fn(),
+			}),
+			move: vi.fn(),
+		};
 		playerInstance.piece = obj;
-		playerInstance.board.pieceCollides = vi.fn().mockReturnValue(false)
+		playerInstance.board.pieceCollides = vi.fn().mockReturnValue(false);
 		playerInstance.rotatePiece();
 	});
 
 	it('call dropPiece', () => {
-		let obj = {x: 0, y: 0, clone: vi.fn().mockReturnValue({x: 0, y: 0, clone: vi.fn().mockReturnValue(), move: vi.fn(), rotate: vi.fn()}), move: vi.fn()}
+		let obj = {
+			x: 0,
+			y: 0,
+			clone: vi.fn().mockReturnValue({
+				x: 0,
+				y: 0,
+				clone: vi.fn().mockReturnValue(),
+				move: vi.fn(),
+				rotate: vi.fn(),
+			}),
+			move: vi.fn(),
+		};
 		playerInstance.piece = obj;
 		playerInstance.board.pieceCollides = vi.fn((prix) => {
 			return prix.y > 10 ? true : false;
@@ -322,9 +447,20 @@ describe('Game server', () => {
 	});
 
 	it('call penality', () => {
-		let obj = {x: 0, y: 0, clone: vi.fn().mockReturnValue({x: 0, y: 0, clone: vi.fn().mockReturnValue(), move: vi.fn(), rotate: vi.fn()}), move: vi.fn()}
+		let obj = {
+			x: 0,
+			y: 0,
+			clone: vi.fn().mockReturnValue({
+				x: 0,
+				y: 0,
+				clone: vi.fn().mockReturnValue(),
+				move: vi.fn(),
+				rotate: vi.fn(),
+			}),
+			move: vi.fn(),
+		};
 		playerInstance.piece = obj;
-		
+
 		playerInstance.board.pieceOutOfBounds = vi.fn().mockReturnValue(true);
 		playerInstance.socket.removeAllListeners = vi.fn();
 		playerInstance.lost = false;
@@ -334,6 +470,5 @@ describe('Game server', () => {
 	it('call quit', () => {
 		playerInstance.socket.removeAllListeners = vi.fn();
 		playerInstance.quit(10);
-	});	
-
+	});
 });

@@ -4,6 +4,7 @@ import piece from './reducers/piece';
 import nextShapes from './reducers/nextShapes';
 import player from './reducers/player';
 import game from './reducers/game';
+import error from './reducers/error';
 
 export default configureStore({
 	reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
 		nextShapes,
 		player,
 		game,
+		error,
 	},
 });

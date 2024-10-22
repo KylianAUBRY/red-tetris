@@ -1,6 +1,5 @@
-// export const PROD =
-// 	import.meta?.env?.PROD || process.env.NODE_ENV === 'production';
-export const PROD = false;
+export const PROD =
+	import.meta?.env?.PROD || process.env.NODE_ENV === 'production';
 
 export const PORT = 4000;
 export const WIDTH = 10;

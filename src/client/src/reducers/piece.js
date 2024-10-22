@@ -1,17 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+	x: 0,
+	y: 0,
+	shape: [[null]],
+};
+
 export const pieceSlice = createSlice({
 	name: 'piece',
-	initialState: {
-		x: 0,
-		y: 0,
-		shape: [
-			[null, null, null, null],
-			[null, null, null, null],
-			[null, null, null, null],
-			[null, null, null, null],
-		],
-	},
+	initialState: { ...initialState },
 	reducers: {
 		setPiece: (state, action) => {
 			state.shape = action.payload.shape;
@@ -36,10 +33,13 @@ export const pieceSlice = createSlice({
 		dropPiece: (state, action) => {
 			state.y = action.payload;
 		},
+		resetPiece: (state) => {
+			Object.assign(state, initialState);
+		},
 	},
 });
 
-export const { setPiece, movePiece, rotatePiece, dropPiece } =
+export const { setPiece, movePiece, rotatePiece, dropPiece, resetPiece } =
 	pieceSlice.actions;
 
 export const selectPiece = (state) => state.piece;

@@ -58,9 +58,6 @@ class Game {
 						socket.emit('addOpponent', player.toOpponent());
 					}
 				}
-				if (this.players.size === 0) {
-					player.setOwner(true, true);
-				}
 				if (this.started) {
 					if (player.ready) {
 						player.startGameEvents();
@@ -69,6 +66,7 @@ class Game {
 					}
 				}
 				this.players.set(player_name, player);
+				this.players.values().next().value.setOwner(true);
 				console.log('Player', player_name, 'connected to room', this.room);
 			}
 		}
@@ -84,7 +82,7 @@ class Game {
 				console.log('Room', this.room, 'is empty');
 				this.serverSend('empty', this.room);
 			} else {
-				this.players.values().next().value.setOwner(true, false);
+				this.players.values().next().value.setOwner(true);
 			}
 		}
 	}

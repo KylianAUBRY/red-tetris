@@ -1,19 +1,16 @@
-import {expect, describe, beforeEach, it} from 'vitest';
-import Rand from '../Rand.js'
-import { getPiece } from '../../store_for_test.js';
+import { expect, describe, it } from 'vitest';
+import Rand from '../Rand.js';
 
-
-describe('Rand server', () => {	
-
+describe('Rand server', () => {
 	it('call Rand', () => {
 		let rand = new Rand(2);
-		expect(rand.seed).toBe(2)
+		expect(rand.seed).toBe(2);
 	});
 
 	it('call Rand function set', () => {
 		let rand = new Rand(2);
 		rand.set(1);
-		expect(rand.seed).toBe(1)
+		expect(rand.seed).toBe(1);
 	});
 
 	it('call Rand function next', () => {
@@ -53,13 +50,12 @@ describe('Rand server', () => {
 	it('call Rand function shuf', () => {
 		let rand = new Rand(2);
 		let array = Array(10);
-		for(let i = 0; i < 10 ; i++) {
+		for (let i = 0; i < 10; i++) {
 			array[i] = i;
 		}
-		let tmpArray = {...array};
+		let tmpArray = { ...array };
 		expect(rand.shuf(array)).not.toBe(tmpArray);
-		rand.shuf(array)
+		rand.shuf(array);
 		expect(rand.shuf(tmpArray)).not.toBe(array);
 	});
-
 });

@@ -1,18 +1,17 @@
 .Game {
-	--panel-radius: 1vmin;
-	--panel-gap: 2vmin;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	justify-content: space-between;
-	align-items: center;
-	position: relative;
-	width: 100%;
-	height: 100%;
-	background-color: var(--back-color);
+    --panel-radius: 1vmin;
+    --panel-gap: 2vmin;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+    position: relative;
+    background-color: var(--back-color);
 }
 
 .right-box {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }

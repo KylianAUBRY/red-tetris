@@ -83,16 +83,21 @@ class Board {
 	}
 
 	addPenalityLines(line, count) {
+		let lose = false;
 		for (let i = 0; i < count; i++) {
-			if (this.grid[0].every((color) => !color)) {
-				this.grid.splice(0, 1);
+			if (this.grid[0].some((color) => color)) {
+				lose = true;
 			}
+			this.grid.splice(0, 1);
 			this.grid.push(line);
 		}
+		return lose;
 	}
 
 	clearGrid() {
-		this.grid.forEach((row) => row.fill(null));
+		this.grid = Array.from({ length: this.height }, () =>
+			Array(this.width).fill(null)
+		);
 	}
 }
 

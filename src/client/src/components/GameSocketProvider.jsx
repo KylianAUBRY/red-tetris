@@ -34,11 +34,14 @@ import {
 	gameDisconnection,
 	spectGame,
 } from '../reducers/game';
+import { setErrorMsg } from '../reducers/error';
+import { useNavigate } from 'react-router-dom';
 import useBoxRef from '../hooks/useBoxRef';
 import { PROD, PORT, MOVE_DELAY, MOVE_INTERVAL } from '../../../constants';
 
 function setDelayedInterval(callback, delayTimeout, intervalTime, ...args) {
-	let timeoutId, intervalId;
+	let timeoutId = null;
+	let intervalId = null;
 
 	timeoutId = setTimeout(() => {
 		intervalId = setInterval(callback, intervalTime, ...args);
@@ -48,6 +51,8 @@ function setDelayedInterval(callback, delayTimeout, intervalTime, ...args) {
 		clear() {
 			clearTimeout(timeoutId);
 			clearInterval(intervalId);
+			timeoutId = null;
+			intervalId = null;
 		},
 	};
 }
@@ -56,6 +61,7 @@ export const SocketContext = createContext(null);
 
 export default function GameSocketProvider({ room, player_name, children }) {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const URL = PROD ? undefined : `http://localhost:${PORT}`;
 	const sessionid = sessionStorage.getItem('sessionid');
 	const pieceRef = useBoxRef(useSelector(selectPiece));
@@ -112,7 +118,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			}
 		});
 
-		socket.on('owner', (value, isNewRoom) => {
+		socket.on('owner', (value) => {
 			dispatch(setPlayerOwner(value));
 		});
 
@@ -139,6 +145,8 @@ export default function GameSocketProvider({ room, player_name, children }) {
 
 		socket.on('error', (reason) => {
 			console.log('Error:', reason);
+			dispatch(setErrorMsg(reason));
+			navigate('/');
 		});
 
 		socket.on('addOpponent', (opponent) => {
@@ -161,22 +169,26 @@ export default function GameSocketProvider({ room, player_name, children }) {
 
 		let keysInterval = new Map();
 
-		const handleKeyUp = (event) => {
-			const interval = keysInterval.get(event.key);
+		const clearInterval = (key) => {
+			const interval = keysInterval.get(key);
 			if (interval) {
 				interval.clear();
 				keysInterval.delete(event.key);
 			}
 		};
 
+		const handleKeyUp = (event) => {
+			clearInterval(event.key);
+		};
+
 		const handleKeyDown = (event) => {
 			if (!event.repeat) {
 				let move;
 				if (event.key === 'ArrowLeft') {
-					handleKeyUp({ key: 'ArrowRight' });
+					clearInterval('ArrowRight');
 					move = 'left';
 				} else if (event.key === 'ArrowRight') {
-					handleKeyUp({ key: 'ArrowLeft' });
+					clearInterval('ArrowLeft');
 					move = 'right';
 				} else if (event.key === 'ArrowDown') {
 					move = 'down';
@@ -187,6 +199,7 @@ export default function GameSocketProvider({ room, player_name, children }) {
 				}
 				if (move) {
 					socket.emit('move', move);
+					clearInterval(event.key);
 					keysInterval.set(
 						event.key,
 						setDelayedInterval(
@@ -210,7 +223,16 @@ export default function GameSocketProvider({ room, player_name, children }) {
 			socket.disconnect();
 			socket.removeAllListeners();
 		};
-	}, [dispatch, URL, room, player_name, sessionid, pieceRef, playerLostRef]);
+	}, [
+		dispatch,
+		navigate,
+		URL,
+		room,
+		player_name,
+		sessionid,
+		pieceRef,
+		playerLostRef,
+	]);
 
 	return (
 		<SocketContext.Provider value={socketRef}>

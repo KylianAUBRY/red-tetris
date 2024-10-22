@@ -6,12 +6,26 @@ import Player from '../components/Player';
 
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { setPlayerName } from '../reducers/player';
+import { resetBoard } from '../reducers/board';
+import { resetError } from '../reducers/error';
+import { resetGame } from '../reducers/game';
+import { resetNextShapes } from '../reducers/nextShapes';
+import { resetPiece } from '../reducers/piece';
+import { setPlayerName, resetPlayer } from '../reducers/player';
 import { setRoom } from '../reducers/game';
 
-function Game() {
+export default function Game() {
 	const dispatch = useDispatch();
 	const { room, player_name } = useParams();
+
+	useEffect(() => {
+		dispatch(resetBoard());
+		dispatch(resetError());
+		dispatch(resetGame());
+		dispatch(resetNextShapes());
+		dispatch(resetPiece());
+		dispatch(resetPlayer());
+	}, [dispatch]);
 
 	useEffect(() => {
 		dispatch(setPlayerName(player_name));
@@ -28,5 +42,3 @@ function Game() {
 		</div>
 	);
 }
-
-export default Game;

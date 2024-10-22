@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import Game from './pages/Game';
+import Home from './pages/Home';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
@@ -31,6 +32,7 @@ function App() {
 			<BrowserRouter>
 				<Routes>
 					<Route path='/:room/:player_name' element={<Game />} />
+					<Route path='*' element={<Home/>} />
 				</Routes>
 			</BrowserRouter>
 		</div>
