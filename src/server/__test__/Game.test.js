@@ -71,6 +71,7 @@ describe('Game server', () => {
 		socket.handshake.auth.player_name = 'test';
 		gameInstance.players = new Map();
 		gameInstance.players.set('test', {
+			setOwner: vi.fn(),
 			connection: vi.fn().mockReturnValue(true),
 			toOpponent: vi.fn(),
 			startGameEvents: vi.fn(),
